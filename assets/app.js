@@ -24,7 +24,7 @@ const questions=[
 const $=id=>document.getElementById(id);
 const readStore=(key,fallback)=>{try{const v=JSON.parse(localStorage.getItem(key));return v??fallback;}catch{return fallback;}};
 const writeStore=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{return false;}};
-let done=new Set(readStore('haiDatV2Progress',[]));
+let done=new Set((Array.isArray(readStore('haiDatV2Progress',[]))?readStore('haiDatV2Progress',[]):[]).filter(x=>typeof x==='string'));
 function drawCourses(){
  const q=$('search').value.toLocaleLowerCase('vi').trim(),lv=$('level').value;
  const items=lessons.map((it,i)=>({it,i})).filter(({it})=>(lv==='all'||String(it[0])===lv)&&(!q||it.slice(1).join(' ').toLocaleLowerCase('vi').includes(q)));
@@ -43,9 +43,47 @@ function drawCourses(){
  $('courseStatus').textContent=items.length?'Đang hiển thị '+items.length+' bài học.':'Không tìm thấy bài học phù hợp.';
 }
 function updateProgress(){const n=lessons.filter(x=>done.has(x[2])).length;$('progressText').textContent=n+'/'+lessons.length+' hoàn thành';$('progressFill').style.width=(n/lessons.length*100)+'%';$('progressBar').setAttribute('aria-valuenow',String(n));}
+
+// Markdown reader with safe DOM nodes, not innerHTML: textual content is never executed.
+// Supports common headings, unordered/ordered lists, code fences, paragraphs and links.
+function renderMarkdown(source){
+ const root=document.createDocumentFragment();
+ let list=null,code=null,paragraph=[];
+ function flushParagraph(){if(!paragraph.length)return;const p=document.createElement('p');addInline(p,paragraph.join(' '));root.append(p);paragraph=[];}
+ function closeList(){list=null;}
+ function addInline(parent,text){
+  // Only open safe absolute HTTPS URLs and relative file paths.
+  const re=/\[([^\]]+)\]\(([^)]+)\)/g;let from=0,match;
+  while((match=re.exec(text))!==null){
+   if(match.index>from)parent.append(document.createTextNode(text.slice(from,match.index)));
+   const target=match[2].trim();let safe=false;
+   if(/^https:\/\//i.test(target))safe=true;
+   else if(!/^[a-z][a-z0-9+.-]*:/i.test(target)&&!target.startsWith('//')&&!target.startsWith('/')&&!target.includes('..'))safe=true;
+   if(safe){const a=document.createElement('a');a.href=target;a.textContent=match[1];a.rel='noopener noreferrer';parent.append(a);}
+   else parent.append(document.createTextNode(match[0]));
+   from=re.lastIndex;
+  }
+  if(from<text.length)parent.append(document.createTextNode(text.slice(from)));
+ }
+ for(const line of source.replace(/\r\n/g,'\n').split('\n')){
+  if(/^\s*```/.test(line)){flushParagraph();closeList();if(code){root.append(code.wrapper);code=null;}else{const wrapper=document.createElement('pre'),elem=document.createElement('code');wrapper.append(elem);code={wrapper,elem};}continue;}
+  if(code){code.elem.textContent+=line+'\n';continue;}
+  if(!line.trim()){flushParagraph();closeList();continue;}
+  const heading=line.match(/^(#{1,3})\s+(.+)$/);
+  if(heading){flushParagraph();closeList();const el=document.createElement('h'+heading[1].length);addInline(el,heading[2]);root.append(el);continue;}
+  const bullet=line.match(/^\s*([-*]|\d+\.)\s+(.+)$/);
+  if(bullet){flushParagraph();const type=/\d/.test(bullet[1])?'ol':'ul';if(!list||list.tagName.toLowerCase()!==type){list=document.createElement(type);root.append(list);}const li=document.createElement('li');addInline(li,bullet[2]);list.append(li);continue;}
+  const quote=line.match(/^>\s?(.*)$/);
+  if(quote){flushParagraph();closeList();const el=document.createElement('blockquote');addInline(el,quote[1]);root.append(el);continue;}
+  closeList();paragraph.push(line.trim());
+ }
+ flushParagraph();if(code)root.append(code.wrapper);
+ return root;
+}
+
 async function openLesson(it){
  $('readerTitle').textContent=it[1];$('readerContent').textContent='Đang tải bài học...';$('readerStatus').textContent='';
- try{const response=await fetch('./lessons/'+it[2],{cache:'no-cache'});if(!response.ok)throw Error('HTTP '+response.status);const t=await response.text();$('readerContent').textContent=t;$('readerStatus').textContent='Đã tải tài liệu Markdown. Xem liên kết nguồn trong nội dung bài.';}
+ try{const response=await fetch('./lessons/'+it[2],{cache:'no-cache'});if(!response.ok)throw Error('HTTP '+response.status);const t=await response.text();$('readerContent').replaceChildren(renderMarkdown(t));$('readerSource').href='./lessons/'+it[2];$('readerStatus').textContent='Đã tải bài học. Liên kết tới tài liệu gốc nằm dưới nội dung.';}
  catch(e){$('readerContent').textContent='Chưa tải được bài học. Hãy mở từ kho GitHub hoặc thử lại khi có mạng.';$('readerStatus').textContent=String(e.message);}
 }
 $('search').addEventListener('input',drawCourses);$('level').addEventListener('change',drawCourses);
@@ -60,12 +98,12 @@ $('savePrompt').addEventListener('click',()=>{const p={};for(const id of ['mode'
 $('clearPrompt').addEventListener('click',()=>{for(const id of ['subject','style','constraints','output'])$(id).value='';try{localStorage.removeItem('haiDatV2Prompt');}catch{}ps('Đã xóa nội dung và bản lưu cục bộ.');});
 $('copyPrompt').addEventListener('click',async()=>{if(!$('output').value)return ps('Chưa có prompt.');try{await navigator.clipboard.writeText($('output').value);ps('Đã sao chép.');}catch{$('output').select();ps('Hãy sao chép đoạn văn bản đã chọn.');}});
 $('exportPrompt').addEventListener('click',()=>{if(!$('output').value)return ps('Chưa có prompt.');const blob=new Blob([$('output').value],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='hai-dat-ai-prompt.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);ps('Đã chuẩn bị tệp TXT.');});
-const saved=readStore('haiDatV2Prompt',{});for(const id of ['mode','subject','style','constraints','output'])if(typeof saved[id]==='string')$(id).value=saved[id];
+const saved=readStore('haiDatV2Prompt',{});for(const id of ['mode','subject','style','constraints','output'])if(saved&&typeof saved==='object'&&typeof saved[id]==='string')$(id).value=saved[id];
 const starter='<h1>Xin chào Hai Đất!</h1>\n<p>Tui đang học HTML và CSS.</p>\n<style>body{font-family:system-ui;padding:20px;color:seagreen}</style>';
 $('code').value=starter;function runCode(){$('preview').srcdoc=$('code').value;$('codeStatus').textContent='Đã cập nhật bản xem trước (sandbox).';}
 $('runCode').addEventListener('click',runCode);$('resetCode').addEventListener('click',()=>{$('code').value=starter;runCode();});runCode();
 let current=0,score=0,answered=false;
-function drawQuiz(){const [topic,q,opts]=questions[current];$('quizNumber').textContent='Câu '+(current+1)+'/'+questions.length;$('quizTopic').textContent=topic;$('quizQuestion').textContent=q;$('quizOptions').replaceChildren();opts.forEach((op,i)=>{const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='quizAnswer';input.value=String(i);label.append(input,document.createTextNode(op));$('quizOptions').append(label);});$('quizFeedback').textContent='';answered=false;}
+function drawQuiz(){$('nextQuestion').disabled=false;const [topic,q,opts]=questions[current];$('quizNumber').textContent='Câu '+(current+1)+'/'+questions.length;$('quizTopic').textContent=topic;$('quizQuestion').textContent=q;$('quizOptions').replaceChildren();opts.forEach((op,i)=>{const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='quizAnswer';input.value=String(i);label.append(input,document.createTextNode(op));$('quizOptions').append(label);});$('quizFeedback').textContent='';answered=false;}
 $('checkAnswer').addEventListener('click',()=>{if(answered)return;const chosen=document.querySelector('input[name=quizAnswer]:checked');if(!chosen)return $('quizFeedback').textContent='Hãy chọn một đáp án.';const ok=Number(chosen.value)===questions[current][3];if(ok)score++;answered=true;$('quizFeedback').textContent=(ok?'Chính xác! ':'Chưa đúng. ')+questions[current][4]+' Điểm: '+score+'/'+(current+1);});
-$('nextQuestion').addEventListener('click',()=>{if(!answered)return $('quizFeedback').textContent='Hãy kiểm tra đáp án trước.';if(current===questions.length-1){$('quizFeedback').textContent='Hoàn tất: '+score+'/'+questions.length+'. Bấm Làm lại để thử tiếp.';return;}current++;drawQuiz();});
+$('nextQuestion').addEventListener('click',()=>{if(!answered)return $('quizFeedback').textContent='Hãy kiểm tra đáp án trước.';if(current===questions.length-1){$('quizFeedback').textContent='Hoàn tất: '+score+'/'+questions.length+'. Bấm Làm lại để thử tiếp.';$('nextQuestion').disabled=true;return;}current++;drawQuiz();});
 $('restartQuiz').addEventListener('click',()=>{current=0;score=0;drawQuiz();});drawQuiz();

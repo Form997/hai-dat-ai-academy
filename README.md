@@ -2,7 +2,7 @@
 
 **Học, làm, kiểm chứng và chia sẻ AI — từ người mới tới chuyên sâu.**
 
-> Phiên bản 0.1.0 — nền móng học tập mở, không tuyên bố đã có API tạo ảnh/nhạc/video miễn phí vô hạn.
+> Phiên bản 2.5 — nền tảng học tập web tĩnh với công cụ thực hành, không tuyên bố đã có API tạo ảnh/nhạc/video miễn phí vô hạn.
 
 [🌐 Mở phòng thực hành](./index.html) · [🗺 Lộ trình học](./ROADMAP.md) · [🤝 Đóng góp](./CONTRIBUTING.md) · [🔒 Bảo mật](./SECURITY.md)
 
@@ -55,3 +55,10 @@ Nếu chỉ muốn dùng thử offline: mở `index.html` trong trình duyệt. 
 Mở Issue để báo lỗi hoặc đề xuất giáo trình; mở Pull Request kèm nguồn tham khảo, kiểm thử, phạm vi sử dụng và giấy phép. Xem `CONTRIBUTING.md`.
 
 **Bản quyền:** Mã nguồn tự tạo trong kho theo MIT (`LICENSE`). Bài học viết mới trong kho được chia sẻ theo [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) trừ khi ghi riêng. Tên, dữ liệu và tài sản bên thứ ba tuân theo giấy phép của chính chúng.
+
+## Bản nâng cấp V2.5
+
+- Đọc bài Markdown trên trang với trình hiển thị DOM an toàn (phạm vi cú pháp có giới hạn).
+- Bộ kiểm thử tĩnh: chạy `node tests/smoke.cjs` (Node 18+).
+- GitHub Actions tự kiểm tra Pull Request và commit lên main.
+- Xem [Release notes V2.5](./V2.5-RELEASE-NOTES.md).
