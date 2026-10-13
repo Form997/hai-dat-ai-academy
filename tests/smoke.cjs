@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('index.html'),js=read('assets/app.js'),css=read('assets/styles.css');
+new Function(js);
+assert.match(html,/lang="vi"/);assert.match(html,/assets\/app\.js/);assert.match(html,/assets\/styles\.css/);
+assert.match(html,/sandbox="allow-scripts"/);assert.doesNotMatch(html,/allow-same-origin/);
+assert.match(html,/id="readerContent"/);assert.match(js,/renderMarkdown\(t\)/);assert.doesNotMatch(js,/readerContent'\)\.innerHTML/);
+assert.match(js,/localStorage/);assert.match(css,/max-width:750px/);
+const lessonRegex=/\[\d,'[^']+','([^']+\.md)'/g;
+const names=[...js.matchAll(lessonRegex)].map(m=>m[1]);
+assert.equal(names.length,12,'Expected 12 lessons');
+for(const name of names) assert.ok(fs.existsSync(path.join(root,'lessons',name)),name);
+for(const p of ['README.md','ROADMAP.md','CONTRIBUTING.md','SECURITY.md','resources/api-selection.md','V2.5-RELEASE-NOTES.md'])assert.ok(fs.existsSync(path.join(root,p)),p);
+console.log('PASS: syntax, 12 lesson paths, resources, sandbox and page assets.');
