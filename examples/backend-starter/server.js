@@ -15,23 +15,28 @@ async function image(req,res){
  if(!authorized(req))return json(res,401,{error:'Unauthorized'});
  const token=req.headers['x-api-token'];
  const now=Date.now(),record=seen.get(token)||{start:now,count:0};if(now-record.start>WINDOW){record.start=now;record.count=0;}record.count++;seen.set(token,record);if(record.count>LIMIT)return json(res,429,{error:'Rate limit exceeded'});
- if(!process.env.OPENAI_API_KEY)return json(res,503,{error:'Image provider not configured'});
+ const provider=process.env.IMAGE_PROVIDER||'openai';
+ if(!['openai','pollinations'].includes(provider))return json(res,503,{error:'Unknown image provider'});
+ const key=provider==='pollinations'?process.env.POLLINATIONS_API_KEY:process.env.OPENAI_API_KEY;
+ if(!key)return json(res,503,{error:'Image provider not configured'});
  let data;try{data=await readBody(req);}catch(e){return json(res,e.status||400,{error:e.status===413?'Payload too large':'Invalid JSON'});}
  const prompt=data&&typeof data.prompt==='string'?data.prompt.trim():'';
  const size=data&&typeof data.size==='string'?data.size:'1024x1024';
  if(prompt.length<10||prompt.length>1200||!allowedSizes.has(size))return json(res,400,{error:'Invalid prompt or size'});
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),45_000);
  try{
-  const upstream=await fetch('https://api.openai.com/v1/images/generations',{method:'POST',headers:{'Authorization':'Bearer '+process.env.OPENAI_API_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:process.env.OPENAI_IMAGE_MODEL||'gpt-image-1',prompt,size,n:1}),signal:controller.signal});
+  const target=provider==='pollinations'?'https://gen.pollinations.ai/v1/images/generations':'https://api.openai.com/v1/images/generations';
+  const model=provider==='pollinations'?(process.env.POLLINATIONS_IMAGE_MODEL||'flux'):(process.env.OPENAI_IMAGE_MODEL||'gpt-image-1');
+  const upstream=await fetch(target,{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model,prompt,size,n:1,response_format:'b64_json'}),signal:controller.signal});
   if(!upstream.ok){return json(res,502,{error:'Image provider returned an error',provider_status:upstream.status});}
   const result=await upstream.json();const b64=result?.data?.[0]?.b64_json;
   if(typeof b64!=='string')return json(res,502,{error:'Provider did not return base64 image'});
-  return json(res,200,{image_base64:b64,mime_type:'image/png',model:process.env.OPENAI_IMAGE_MODEL||'gpt-image-1'});
+  return json(res,200,{image_base64:b64,mime_type:'image/png',model});
  }catch{return json(res,504,{error:'Image provider unavailable or timed out'});}finally{clearTimeout(timeout);}
 }
 const server=http.createServer(async(req,res)=>{
  const pathname=new URL(req.url||'/', 'http://localhost').pathname;
- if(req.method==='GET'&&pathname==='/health')return json(res,200,{status:'ok',provider_configured:Boolean(process.env.OPENAI_API_KEY)});
+ if(req.method==='GET'&&pathname==='/health')return json(res,200,{status:'ok',provider:process.env.IMAGE_PROVIDER||'openai',provider_configured:Boolean((process.env.IMAGE_PROVIDER||'openai')==='pollinations'?process.env.POLLINATIONS_API_KEY:process.env.OPENAI_API_KEY)});
  if(req.method==='POST'&&pathname==='/api/images')return image(req,res);
  return json(res,404,{error:'Not found'});
 });
