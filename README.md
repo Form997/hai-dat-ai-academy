@@ -4,7 +4,7 @@
 
 > Phiên bản 2.5 — nền tảng học tập web tĩnh với công cụ thực hành, không tuyên bố đã có API tạo ảnh/nhạc/video miễn phí vô hạn.
 
-[📖 Kho kiến thức có nguồn](./knowledge/README.md) · [🌐 Mở phòng thực hành](./index.html) · [🗺 Lộ trình học](./ROADMAP.md) · [🤝 Đóng góp](./CONTRIBUTING.md) · [🔒 Bảo mật](./SECURITY.md)
+[📖 Kho kiến thức có nguồn](./knowledge/index.html) · [🌐 Mở phòng thực hành](./index.html) · [🗺 Lộ trình học](./ROADMAP.md) · [🤝 Đóng góp](./CONTRIBUTING.md) · [🔒 Bảo mật](./SECURITY.md)
 
 ## Bắt đầu trong 10 phút (Android hoặc máy tính)
 
@@ -65,4 +65,4 @@ Mở Issue để báo lỗi hoặc đề xuất giáo trình; mở Pull Request 
 
 ## Kho kiến thức có đối chiếu nguồn
 
-Tám chuyên đề từ [Git và lập trình web tới ML, Transformer, mô hình tạo ảnh/nhạc/video và quản trị rủi ro AI](./knowledge/README.md). Nguồn chính thức và công trình học thuật có liên kết gốc trong từng bài, [danh mục nguồn](./knowledge/SOURCES.md). Bài có ví dụ tự soạn và bài tập; chưa phải bộ giáo trình toàn diện hay khóa học được kiểm định độc lập.
+Tám chuyên đề từ [Git và lập trình web tới ML, Transformer, mô hình tạo ảnh/nhạc/video và quản trị rủi ro AI](./knowledge/index.html). Nguồn chính thức và công trình học thuật có liên kết gốc trong từng bài, [danh mục nguồn](./knowledge/SOURCES.md). Bài có ví dụ tự soạn và bài tập; chưa phải bộ giáo trình toàn diện hay khóa học được kiểm định độc lập.
