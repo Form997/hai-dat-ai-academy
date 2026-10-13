@@ -8,7 +8,9 @@ const q=document.getElementById('ragQuery'),o=document.getElementById('ragResult
 document.getElementById('ragSearch').addEventListener('click',()=>{
  const term=q.value.trim().toLocaleLowerCase('vi');o.replaceChildren();
  if(term.length<3){o.textContent='Vui lòng nhập câu hỏi có ít nhất 3 ký tự.';return;}
- const words=term.split(/\s+/).filter(x=>x.length>2);
+ const stop=new Set(['nào','đâu','trong','được','không','những','cách','làm','sao','với','cho','của']);
+ const words=[...new Set((term.match(/[\p{L}\p{N}]+/gu)||[]).filter(x=>x.length>=2&&!stop.has(x)))];
+ if(!words.length){o.textContent='Câu hỏi chưa có từ khóa phù hợp.';return;}
  const results=sourceDocs.map(d=>({...d,score:words.filter(w=>d.text.toLocaleLowerCase('vi').includes(w)||d.title.toLocaleLowerCase('vi').includes(w)).length})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
  if(!results.length){o.textContent='Chưa tìm thấy bằng chứng trong tập mẫu. Không tạo câu trả lời khi thiếu nguồn.';return;}
  for(const d of results){const p=document.createElement('p'),a=document.createElement('a');a.href=d.url;a.rel='noopener noreferrer';a.textContent=d.title;p.append(a,document.createTextNode(' — '+d.text));o.append(p);}
