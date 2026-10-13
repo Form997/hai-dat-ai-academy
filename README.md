@@ -70,3 +70,7 @@ Tám chuyên đề từ [Git và lập trình web tới ML, Transformer, mô hì
 ## V3.1 — Toán học cho AI
 
 [Trang học 5 chương](./math/index.html) gồm đại số tuyến tính, giải tích, xác suất, thống kê và tối ưu; bài tập có lời giải, liên kết nguồn gốc. Chưa có chấm bài tự động hoặc render LaTeX nâng cao.
+
+## V3.2–V3.5
+
+[Mở bốn phòng thực hành](./versions/index.html). V3.2 có ví dụ Python chạy ngoài GitHub Pages; V3.3 thử truy xuất đoạn mẫu, chưa dùng LLM; V3.4 chỉ chuẩn bị yêu cầu ảnh, **chưa tạo ảnh thật**; V3.5 lập kế hoạch nhạc/video và lưu trên thiết bị, **chưa tạo media thật**. Những tính năng AI thật phải có backend và API thích hợp.
