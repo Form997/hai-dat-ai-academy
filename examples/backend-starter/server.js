@@ -27,7 +27,7 @@ async function image(req,res){
  try{
   const target=provider==='pollinations'?'https://gen.pollinations.ai/v1/images/generations':'https://api.openai.com/v1/images/generations';
   const model=provider==='pollinations'?(process.env.POLLINATIONS_IMAGE_MODEL||'flux'):(process.env.OPENAI_IMAGE_MODEL||'gpt-image-1');
-  const upstream=await fetch(target,{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model,prompt,size,n:1,response_format:'b64_json'}),signal:controller.signal});
+  const upstream=await fetch(target,{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify(provider==='pollinations'?{model,prompt,size,n:1,response_format:'b64_json'}:{model,prompt,size,n:1}),signal:controller.signal});
   if(!upstream.ok){return json(res,502,{error:'Image provider returned an error',provider_status:upstream.status});}
   const result=await upstream.json();const b64=result?.data?.[0]?.b64_json;
   if(typeof b64!=='string')return json(res,502,{error:'Provider did not return base64 image'});
