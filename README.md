@@ -66,3 +66,7 @@ Mở Issue để báo lỗi hoặc đề xuất giáo trình; mở Pull Request 
 ## Kho kiến thức có đối chiếu nguồn
 
 Tám chuyên đề từ [Git và lập trình web tới ML, Transformer, mô hình tạo ảnh/nhạc/video và quản trị rủi ro AI](./knowledge/index.html). Nguồn chính thức và công trình học thuật có liên kết gốc trong từng bài, [danh mục nguồn](./knowledge/SOURCES.md). Bài có ví dụ tự soạn và bài tập; chưa phải bộ giáo trình toàn diện hay khóa học được kiểm định độc lập.
+
+## V3.1 — Toán học cho AI
+
+[Trang học 5 chương](./math/index.html) gồm đại số tuyến tính, giải tích, xác suất, thống kê và tối ưu; bài tập có lời giải, liên kết nguồn gốc. Chưa có chấm bài tự động hoặc render LaTeX nâng cao.
