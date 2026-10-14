@@ -1,48 +1,78 @@
-# Chương Toán 4. Thống kê và kiểm định mô hình
+# Chương 4. Thống kê suy luận, hồi quy và đánh giá mô hình — nâng cao
 
-Mức độ: Căn bản có mở rộng ứng dụng AI. Điều kiện đầu vào: phép tính đại số phổ thông và khả năng đọc công thức.
+Mức học: đại học nâng cao. Tiên quyết: xác suất và đại số tuyến tính. Thời lượng gợi ý: 14 giờ lý thuyết, 8 giờ thực hành.
 
 ## Mục tiêu
 
-Hiểu định nghĩa, tính được bài mẫu bằng tay, mô tả được trường hợp ứng dụng trong mô hình AI và phát hiện sai lầm phổ biến.
+Phân biệt mô tả và suy luận; tính interval/test; nhận diện sai lệch, chọn thước đo, thiết kế kiểm định và đánh giá mô hình AI không rò rỉ dữ liệu.
 
 ## Nội dung học
 
-### Bài 4.1. Thống kê mô tả
+### 4.1. Mẫu, tổng thể và cơ chế lấy mẫu
 
-Trung bình mẫu bằng tổng các giá trị chia số mẫu. Trung vị ít nhạy với ngoại lệ hơn trung bình. Độ lệch chuẩn đo phân tán.
+Một mẫu ngẫu nhiên không nhất thiết đại diện nếu khung lấy mẫu sai. Thống kê mẫu là hàm của dữ liệu; tham số tổng thể là đại lượng cần ước lượng. Bias, variance và mean squared error thỏa MSE=Var(θ̂)+Bias(θ̂)².
 
-### Bài 4.2. Lấy mẫu và sai lệch
+### 4.2. Khoảng tin cậy
 
-Nếu chỉ khảo sát lô đất thuận tiện, kết luận có thể không đại diện cho khu vực. Cần kế hoạch chọn mẫu, số lần lặp và ghi rõ sai lệch có thể có.
+Khi dữ liệu độc lập chuẩn (hoặc điều kiện xấp xỉ thích hợp) và σ chưa biết, CI hai phía 95% cho trung bình là X̄±t_(0.975,n−1) s/√n. Diễn giải tần suất: qua nhiều mẫu lặp lại, phương pháp tạo khoảng bao phủ μ khoảng 95%; không phải xác suất hậu nghiệm μ thuộc một khoảng đã tính.
 
-### Bài 4.3. Chỉ số dự báo
+### 4.3. Kiểm định giả thuyết, p-value và power
 
-MAE là trung bình độ lớn lỗi tuyệt đối, cùng đơn vị với biến dự báo; RMSE nhạy hơn với lỗi lớn. So sánh trên cùng tập test.
+p-value là xác suất, dưới giả thuyết H0 và giả thiết mô hình, có thống kê kiểm định ít nhất cực đoan như đã quan sát; không phải P(H0 đúng). Sai lầm loại I: bác bỏ H0 khi H0 đúng. Power=1−β là xác suất phát hiện hiệu ứng theo giả thuyết thay thế cụ thể.
 
-### Bài 4.4. Khoảng tin cậy
+### 4.4. Hồi quy tuyến tính và giả thiết
 
-Khoảng tin cậy có cách diễn giải tần suất theo quy trình lấy mẫu; không nên nói xác suất tham số cố định nằm trong khoảng cụ thể là 95% theo nghĩa tần suất.
+Trong OLS y=Xβ+ε, để có tính không chệch cần các điều kiện bao gồm E[ε|X]=0 và khả định. Giả thiết đồng phương sai dùng cho sai số chuẩn OLS cổ điển; khi heteroskedastic có thể dùng robust SE. Tương quan không suy ra nhân quả.
+
+### 4.5. Regularization và mô hình dự báo
+
+Ridge: minβ ||Xβ−y||₂²+λ||β||₂²; với λ>0 và không phạt intercept theo quy ước, hệ chuẩn XᵀX+λI cho nghiệm duy nhất trên hệ số phạt. Lasso dùng λ||β||₁ tạo nghiệm thưa trong một số điều kiện.
+
+### 4.6. Cross-validation và data leakage
+
+Chia train/validation/test theo đối tượng và thời gian phù hợp. Mọi chuẩn hóa, chọn đặc trưng và tuning phải học trên train fold, rồi áp dụng cho validation fold. Test set chỉ dùng cho báo cáo cuối cùng; lặp đi lặp lại tối ưu trên test gây overfitting vào test.
+
+### 4.7. Đo lường chất lượng mô hình
+
+Phân loại: confusion matrix TP, FP, TN, FN; precision=TP/(TP+FP), recall=TP/(TP+FN), F1=2PR/(P+R) khi mẫu số hợp lệ. Với mất cân bằng lớp, accuracy có thể đánh lừa; xem PR-AUC, calibration, threshold. Hồi quy: MAE, RMSE, phân tích residual; RMSE nhạy với outlier hơn MAE.
+
+### 4.8. So sánh mô hình công bằng và tái lập
+
+Ghi phiên bản dữ liệu, seed, phân chia, cách tune, chi phí tính toán, confidence intervals và baseline. Với dữ liệu có nhóm (nông trại, bệnh nhân, hộ), group split giúp tránh học thuộc mẫu của cùng nhóm.
 
 ## Bài tập thực hành
 
-Thực tế [4,6,9], dự báo [3,7,7]. Tính MAE.
+A: n=16, trung bình=10, độ lệch chuẩn mẫu s=4. Tính sai số chuẩn và CI 95% hai phía theo t với t_(0.975,15)≈2.131.
+
+B: TP=40, FP=10, FN=20, TN=130. Tính accuracy, precision, recall, F1.
+
+C: Chứng minh bias–variance decomposition cho estimator θ̂.
+
+D: Thiết kế split cho dữ liệu theo mùa vụ và ruộng khác nhau, giải thích leakage có thể xảy ra.
 
 ## Lời giải kiểm chứng
 
-MAE=(|4−3|+|6−7|+|9−7|)/3=(1+1+2)/3=4/3≈1,33.
+A: SE=4/√16=1. CI=10±2.131×1=[7.869,12.131].
+
+B: accuracy=(40+130)/200=0.85, precision=40/50=0.8, recall=40/60=0.666667, F1=2×0.8×(2/3)/(0.8+2/3)=8/11≈0.727273.
+
+C: viết θ̂−θ=(θ̂−Eθ̂)+(Eθ̂−θ), bình phương, lấy kỳ vọng; hạng chéo triệt tiêu.
+
+D: ưu tiên chia theo thời gian nếu mục tiêu dự báo vụ tương lai, và theo nhóm ruộng nếu cần kiểm tra tổng quát hóa sang ruộng chưa thấy. Không fit scaler trước split.
 
 ## Câu hỏi mở rộng
 
-Nếu chia train/test ngẫu nhiên đối với số liệu đo theo tuần trên cùng thửa đất, có nguy cơ gì?
+Khi nào cần nested cross-validation? p-value nhỏ có đồng nghĩa hiệu ứng lớn? Phân biệt calibration và discrimination.
 
 ## Gợi ý trả lời
 
-Rò rỉ theo thời gian/đơn vị quan sát. Cần đánh giá chia theo thời gian hoặc theo thửa tùy câu hỏi nghiên cứu.
+Nested CV giúp đánh giá ít lạc quan hơn khi hyperparameter tuning; p-value liên quan bằng chứng đối với H0 chứ không phải cỡ hiệu ứng; calibration đánh giá độ khớp xác suất, discrimination đánh giá khả năng xếp hạng/phân biệt.
 
 ## Nguồn gốc
 
-- https://openstax.org/details/books/introductory-statistics-2e
+- https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/
+- https://online.stat.psu.edu/stat501/
+- https://scikit-learn.org/stable/modules/cross_validation.html
 - https://scikit-learn.org/stable/modules/model_evaluation.html
 
-Ghi chú: Ví dụ tính toán là tình huống sư phạm tự biên soạn, không phải kết quả nghiên cứu thực địa. Đối chiếu công thức và giả thiết với tài liệu gốc trước khi ứng dụng.
+Ví dụ tự biên soạn, không phải kết quả đo đạc hiện trường.
