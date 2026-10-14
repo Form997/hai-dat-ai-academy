@@ -1,48 +1,79 @@
-# Chương Toán 3. Xác suất và biến ngẫu nhiên
+# Chương 3. Xác suất, Bayes và quá trình ngẫu nhiên — nâng cao
 
-Mức độ: Căn bản có mở rộng ứng dụng AI. Điều kiện đầu vào: phép tính đại số phổ thông và khả năng đọc công thức.
+Mức học: đại học nâng cao. Tiên quyết: giải tích, hàm số và đại số. Thời lượng gợi ý: 14 giờ lý thuyết và 8 giờ bài tập.
 
 ## Mục tiêu
 
-Hiểu định nghĩa, tính được bài mẫu bằng tay, mô tả được trường hợp ứng dụng trong mô hình AI và phát hiện sai lầm phổ biến.
+Mô hình hóa biến ngẫu nhiên, tính kỳ vọng/hiệp phương sai, dùng xác suất có điều kiện và Bayes, hiểu hội tụ và Monte Carlo.
 
 ## Nội dung học
 
-### Bài 3.1. Biến cố và xác suất
+### 3.1. Không gian xác suất và biến ngẫu nhiên
 
-Xác suất P(A) nằm từ 0 tới 1. Với các biến cố loại trừ nhau, P(A hoặc B)=P(A)+P(B).
+Không gian (Ω,F,P) gồm tập kết quả, σ-đại số các sự kiện và phép đo xác suất. Với biến ngẫu nhiên rời rạc X, P(X=x)≥0 và tổng_x P(X=x)=1; biến liên tục có mật độ f với tích phân f=1. Mật độ tại một điểm không phải xác suất của điểm đó.
 
-### Bài 3.2. Xác suất có điều kiện
+### 3.2. Xác suất có điều kiện và Bayes
 
-P(A|B)=P(A∩B)/P(B), khi P(B)>0. Không được nhầm P(A|B) với P(B|A).
+P(A|B)=P(A∩B)/P(B) với P(B)>0. Nếu các giả thuyết H_i tạo phân hoạch, P(H_i|E)=P(E|H_i)P(H_i)/Σ_j P(E|H_j)P(H_j). Khi base rate thấp, kết quả test dương tính chưa chắc là xác suất hậu nghiệm cao.
 
-### Bài 3.3. Bayes
+### 3.3. Kỳ vọng, phương sai và hiệp phương sai
 
-P(A|B)=P(B|A)P(A)/P(B), miễn là P(B)>0. Tỷ lệ nền ảnh hưởng mạnh tới giá trị dự báo.
+E[aX+b]=aE[X]+b; Var(X)=E[(X−E[X])²]. Cov(X,Y)=E[(X−EX)(Y−EY)]. Độc lập kéo theo Cov=0 nếu moment tồn tại; chiều ngược lại không đúng nói chung.
 
-### Bài 3.4. Kỳ vọng và phương sai
+Với vector X: covariance Σ=E[(X−μ)(X−μ)ᵀ], là ma trận bán xác định dương.
 
-Kỳ vọng diễn tả trung bình có trọng số xác suất; phương sai đo độ phân tán quanh kỳ vọng. Trong mô hình, trung bình cao không cho biết mức độ bất định.
+### 3.4. Các phân phối thông dụng
+
+Bernoulli(p): E[X]=p, Var(X)=p(1−p). Binomial(n,p): E=np, Var=np(1−p). Normal(μ,σ²): chuẩn hóa Z=(X−μ)/σ. Categorical và Dirichlet thường dùng cho mô hình xác suất; Gaussian đa chiều dùng mean vector và covariance.
+
+### 3.5. Luật số lớn và định lý giới hạn trung tâm
+
+Với X_i độc lập cùng phân phối, E[X_i]=μ và Var(X_i)=σ² hữu hạn, trung bình mẫu hội tụ theo xác suất về μ (luật số lớn yếu). Nếu σ²>0, √n(X̄−μ)/σ hội tụ theo phân phối về N(0,1) (CLT). Không được xem kết quả xấp xỉ chuẩn chính xác ở mọi kích thước n.
+
+### 3.6. Maximum likelihood và MAP
+
+Ước lượng MLE chọn θ tối đa hóa ∏_i p(x_i|θ), tương đương tối đa tổng log-likelihood nếu các quan sát độc lập. MAP tối đa p(θ|D) tỷ lệ với p(D|θ)p(θ); prior đóng vai trò regularization trong nhiều trường hợp.
+
+### 3.7. Monte Carlo và tính bất định
+
+Với mẫu độc lập từ p, E_p[g(X)]≈(1/N)Σg(X_i). Sai số Monte Carlo thường giảm theo 1/√N khi có phương sai hữu hạn; phụ thuộc và phân phối đuôi nặng cần xét riêng.
+
+### 3.8. AI ứng dụng
+
+Naive Bayes, calibration, uncertainty estimation, stochastic gradient và mô hình sinh; phân biệt xác suất dự báo với độ tin cậy thống kê và tránh rò rỉ dữ liệu.
 
 ## Bài tập thực hành
 
-Một phép thử có 20% mẫu dương tính. Kiểm tra có độ nhạy 90% và tỷ lệ dương tính giả 10%. Tính P(dương tính thật | kết quả dương).
+A: Tỷ lệ mắc một tình trạng là 1%, độ nhạy test 90%, độ đặc hiệu 95%. Tìm P(có tình trạng|test dương).
+
+B: Với X là Bernoulli(0.3), tìm E[X], Var(X) và xác suất 2 lần thành công trong 3 phép thử độc lập.
+
+C: Cho X,Y độc lập chuẩn tắc; tính E[X+2Y] và Var(X+2Y).
+
+D: Giải thích tại sao tăng N từ 100 lên 400 thường làm sai số chuẩn Monte Carlo giảm một nửa.
 
 ## Lời giải kiểm chứng
 
-P(D|+)=0,9×0,2/(0,9×0,2+0,1×0,8)=0,18/0,26≈0,6923 (69,23%).
+A: 0.9×0.01/(0.9×0.01+0.05×0.99)=0.009/0.0585≈0.153846, tức 15.38%.
+
+B: E=0.3; Var=0.21; P(S=2)=C(3,2)×0.3²×0.7=0.189.
+
+C: E=0; Var=1+4=5 do độc lập.
+
+D: Standard error tỷ lệ với 1/√N, nên √(100/400)=1/2 (khi các giả định tương ứng thỏa mãn).
 
 ## Câu hỏi mở rộng
 
-Vì sao không thể nói kết quả dương nghĩa là 90% chắc chắn dương tính thật?
+Phân biệt posterior predictive và MAP point estimate. Vì sao P(A|B) khác P(B|A)? Khi nào mô phỏng bootstrap phù hợp hơn giả định phân phối chuẩn?
 
 ## Gợi ý trả lời
 
-90% là độ nhạy P(+|D), không phải giá trị tiên đoán dương P(D|+). Cần xét cả tỷ lệ nền và dương tính giả.
+Posterior predictive tích phân qua bất định tham số, MAP chỉ dùng một điểm; Bayes yêu cầu base rate. Bootstrap có ích khi phân phối lấy mẫu phức tạp, nhưng không tự khắc phục dữ liệu lấy mẫu thiên lệch.
 
 ## Nguồn gốc
 
-- https://openstax.org/details/books/introductory-statistics-2e
-- https://www.statlearning.com/
+- https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/
+- https://www.statlect.com/
+- https://probml.github.io/pml-book/
 
-Ghi chú: Ví dụ tính toán là tình huống sư phạm tự biên soạn, không phải kết quả nghiên cứu thực địa. Đối chiếu công thức và giả thiết với tài liệu gốc trước khi ứng dụng.
+Ví dụ xác suất sư phạm tự tạo; không phải nghiên cứu y tế hay lời khuyên chẩn đoán.

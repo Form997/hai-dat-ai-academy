@@ -1,48 +1,77 @@
-# Chương Toán 2. Giải tích và đạo hàm
+# Chương 2. Giải tích nhiều biến và đạo hàm tự động — nâng cao
 
-Mức độ: Căn bản có mở rộng ứng dụng AI. Điều kiện đầu vào: phép tính đại số phổ thông và khả năng đọc công thức.
+Mức học: đại học nâng cao. Tiên quyết: đạo hàm/tích phân một biến, ma trận. Thời lượng gợi ý: 12 giờ lý thuyết và 8 giờ thực hành.
 
 ## Mục tiêu
 
-Hiểu định nghĩa, tính được bài mẫu bằng tay, mô tả được trường hợp ứng dụng trong mô hình AI và phát hiện sai lầm phổ biến.
+Tính gradient, Jacobian, Hessian; chứng minh quy tắc dây chuyền nhiều biến; giải thích backpropagation, đạo hàm hướng, Taylor và sai phân số.
 
 ## Nội dung học
 
-### Bài 2.1. Đạo hàm theo biến
+### 2.1. Giới hạn và khả vi nhiều biến
 
-Đạo hàm mô tả tốc độ thay đổi tức thời. Với f(x)=x², f'(x)=2x; tại x=3, độ dốc là 6.
+Hàm f:R^d→R khả vi tại x khi có ánh xạ tuyến tính L sao cho f(x+h)=f(x)+L(h)+o(||h||). Khi đó L(h)=∇f(x)ᵀh. Có đạo hàm riêng tại điểm chưa đủ bảo đảm khả vi tại đó.
 
-### Bài 2.2. Đạo hàm riêng
+### 2.2. Gradient, đạo hàm hướng và Jacobian
 
-Với f(x,y)=x²+3y², đạo hàm riêng theo x là 2x, theo y là 6y. Gradient là vector [2x,6y].
+Gradient ∇f=[∂f/∂x₁,…,∂f/∂x_d]ᵀ. Đạo hàm theo vector đơn vị u bằng ∇fᵀu; nếu gradient khác 0 thì hướng tăng nhanh nhất là gradient chuẩn hóa.
 
-### Bài 2.3. Quy tắc dây chuyền
+Với F:R^n→R^m, Jacobian J_F thuộc R^(m×n), hàng i chứa đạo hàm của đầu ra F_i theo đầu vào.
 
-Nếu z=g(x), L=f(z) thì dL/dx=(dL/dz)(dz/dx). Autograd thực hiện quy trình này trên đồ thị phép toán.
+### 2.3. Quy tắc dây chuyền và backpropagation
 
-### Bài 2.4. Mục đích trong AI
+Nếu h=g(x) và y=f(h), thì J_(f∘g)(x)=J_f(g(x))J_g(x). Với hàm mất mát vô hướng L, reverse-mode autodiff lan truyền vector–Jacobian product từ đầu ra về tham số. Nhờ dùng lại các giá trị trung gian, không cần tính riêng đạo hàm cho từng tham số.
 
-Khi tối ưu mô hình, gradient chỉ hướng tăng nhanh của loss tại địa phương; cập nhật gradient descent dùng hướng ngược lại. Đạo hàm không tự bảo đảm hội tụ đến cực tiểu toàn cục.
+Ví dụ: z=wx+b; ŷ=σ(z), σ(z)=1/(1+exp(−z)); L=−[t ln ŷ+(1−t)ln(1−ŷ)]. Khi 0<ŷ<1: dL/dz=ŷ−t, nên dL/dw=(ŷ−t)x và dL/db=ŷ−t.
+
+### 2.4. Hessian và hình học bậc hai
+
+Hessian H_ij=∂²f/(∂x_i∂x_j). Nếu đạo hàm riêng bậc hai liên tục gần điểm thì H đối xứng. Taylor bậc hai: f(x+h)=f(x)+∇f(x)ᵀh+(1/2)hᵀH(x)h+o(||h||²). Hessian dương xác định ở điểm dừng bảo đảm cực tiểu địa phương nghiêm ngặt.
+
+### 2.5. Tích phân và kỳ vọng
+
+Kỳ vọng của hàm mất mát theo phân phối p: E[L(X)]=∫L(x)p(x)dx khi tích phân tồn tại. Gradient của kỳ vọng không phải luôn tự động đổi chỗ được; cần giả thiết chính quy như điều kiện trội để hoán đổi ∇ và ∫.
+
+### 2.6. Kiểm tra gradient bằng sai phân
+
+Sai phân trung tâm [f(x+εe_i)−f(x−εe_i)]/(2ε) có sai số cắt O(ε²) nếu f đủ trơn, nhưng ε quá nhỏ gây sai số làm tròn. So sánh với đạo hàm tự động là cách kiểm thử mã huấn luyện.
+
+### 2.7. Những điểm dễ nhầm
+
+Đạo hàm của ReLU tại 0 không xác định theo nghĩa thông thường; framework dùng quy ước subgradient. Với softmax phải tính Jacobian hoặc ghép với cross-entropy để tránh tính toán kém ổn định.
 
 ## Bài tập thực hành
 
-Tính gradient của L(w)=(w−4)² tại w=1.
+A: f(x,y)=x²+3xy+y². Tính gradient, Hessian tại (1,2).
+
+B: z=2x−1, ŷ=σ(z), x=1, t=1. Tính ŷ, dL/dz và dL/dx với binary cross-entropy.
+
+C: chứng minh Jacobian của F(x)=[x₁²+x₂, x₁x₂] và nêu kích thước.
+
+D: phân tích vì sao đạo hàm riêng tồn tại không đủ để khẳng định hàm khả vi.
 
 ## Lời giải kiểm chứng
 
-dL/dw=2(w−4); tại w=1 nhận −6.
+A: ∇f=(2x+3y,3x+2y), tại (1,2) là (8,7). H=[[2,3],[3,2]] có trị riêng 5 và −1 nên không xác định dương.
+
+B: z=1, ŷ=1/(1+e⁻¹)≈0.731059; dL/dz=ŷ−1≈−0.268941; dL/dx=−0.537883.
+
+C: J=[[2x₁,1],[x₂,x₁]], có kích thước 2×2.
+
+D: ví dụ f(x,y)=xy/(x²+y²) khi (x,y)≠(0,0), f(0,0)=0. Hai đạo hàm riêng tại gốc bằng 0 nhưng theo đường x=y, f=1/2 nên không liên tục tại gốc.
 
 ## Câu hỏi mở rộng
 
-Dùng learning rate 0,1 cập nhật một bước từ w=1.
+Vì sao reverse-mode hiệu quả khi L có một đầu ra và hàng triệu tham số? Khi nào gradient clipping cần thiết? Phân biệt gradient và Jacobian.
 
 ## Gợi ý trả lời
 
-w_mới=1−0,1×(−6)=1,6.
+Reverse-mode truyền một covector từ đầu ra về toàn bộ tham số trong một lượt qua đồ thị; clipping hạn chế norm gradient lớn nhưng không sửa nguyên nhân nổ gradient. Gradient dành cho scalar output, Jacobian cho vector output.
 
 ## Nguồn gốc
 
-- https://openstax.org/details/books/calculus-volume-1
-- https://docs.pytorch.org/tutorials/beginner/basics/autograd_tutorial.html
+- https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/
+- https://docs.pytorch.org/docs/stable/autograd.html
+- https://www.deeplearningbook.org/
 
-Ghi chú: Ví dụ tính toán là tình huống sư phạm tự biên soạn, không phải kết quả nghiên cứu thực địa. Đối chiếu công thức và giả thiết với tài liệu gốc trước khi ứng dụng.
+Các bài tập do học viện biên soạn; không phải trích nguyên văn bài giảng.
