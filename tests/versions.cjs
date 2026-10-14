@@ -2,3 +2,11 @@
 const vm=require('node:vm');function mock(){const map={},ids=['imgPrompt','imgRatio','imgRequest','imgStatus','imgMake','mediaType','mediaIdea','mediaDetails','mediaOutput','mediaStatus','mediaBuild','mediaSave','mediaClear'];for(const id of ids)map[id]={value:'',textContent:'',listeners:{},addEventListener(e,fn){this.listeners[e]=fn;}};map.imgRatio.value='1:1';map.mediaType.value='video';const saved=new Map();return{map,ctx:vm.createContext({document:{getElementById:id=>map[id]},localStorage:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)}}),saved};}
 {const m=mock();vm.runInContext(read('versions/image-lab.js'),m.ctx);m.map.imgPrompt.value='Một cánh đồng lúa xanh';m.map.imgMake.listeners.click();assert.ok(m.map.imgRequest.value.includes('draft_only'));m.map.imgPrompt.listeners.input();assert.equal(m.map.imgRequest.value,'');}
 {const m=mock();vm.runInContext(read('versions/media.js'),m.ctx);m.map.mediaIdea.value='Kịch bản cảnh mở đầu';m.map.mediaBuild.listeners.click();assert.ok(m.map.mediaOutput.value.includes('Kịch bản'));m.map.mediaIdea.listeners.input();assert.equal(m.map.mediaOutput.value,'');m.map.mediaSave.listeners.click();assert.ok(m.saved.has('hd-v35'));m.map.mediaClear.listeners.click();assert.ok(!m.saved.has('hd-v35'));}
+
+// Homepage routes must point to existing local pages.
+const homepage=read('index.html');
+for(const route of ['#courses','./knowledge/index.html','./curriculum/index.html','./math/index.html','./versions/v32.html','./versions/v33.html','./versions/v34.html','./versions/v35.html']){
+ assert.ok(homepage.includes('href="'+route+'"'),'Missing homepage route: '+route);
+ if(route.startsWith('./'))assert.ok(require('node:fs').existsSync(require('node:path').join(root,route)),'Target missing: '+route);
+}
+assert.ok(homepage.includes('id="learning-path"'),'Missing unified learning section');
