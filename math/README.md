@@ -37,3 +37,19 @@ Cho dữ liệu huấn luyện được phép sử dụng: (i) tách train/valid
 - PyTorch autograd: https://docs.pytorch.org/docs/stable/autograd.html
 
 Các câu ví dụ, bài tập, lời giải trong tài liệu là nội dung tự biên soạn; không sao chép học liệu có bản quyền. Phải kiểm chứng các giả thiết định lý trước khi áp dụng thực tế.
+
+## Chuẩn thực hành bắt buộc cho các bài học nâng cấp
+
+Mỗi ví dụ ứng dụng cần phân biệt dữ liệu quan trắc thực với dữ liệu giả lập; công bố đơn vị, giả thiết, phép tính tay đối chứng, mã có thể chạy, cách chia dữ liệu và thước đo đánh giá. Không suy ra quan hệ nhân quả chỉ từ tương quan. Ví dụ trong nông nghiệp chỉ minh họa phương pháp, không tự động trở thành khuyến nghị vận hành tưới hoặc bón phân.
+
+### Đề bài thực hành tích hợp: dữ liệu cảm biến tưới
+
+Dùng dữ liệu giả lập theo ngày với các cột: ngày đo, độ ẩm đất (% thể tích), nhiệt độ (°C), lượng mưa (mm), lượng tưới (L/m²). Mục tiêu là dự báo một biến đã định nghĩa rõ, ví dụ độ ẩm đất ngày tiếp theo, thay vì khẳng định có thể xác định nhu cầu tưới tối ưu từ vài mẫu.
+
+- Kiểm tra phạm vi và đơn vị; báo cáo dữ liệu thiếu, dữ liệu bất thường và các giả định.
+- Chia tập theo thời gian (không trộn ngẫu nhiên tương lai vào quá khứ); chỉ học tham số chuẩn hóa trên tập train.
+- Dùng baseline đơn giản như dự báo bằng giá trị ngày trước; so sánh với hồi quy ridge bằng MAE và RMSE trên test.
+- Nếu thiếu dữ liệu thực địa, ghi rõ kết quả chỉ kiểm thử quy trình, không đánh giá khả năng dự báo ngoài thực tế.
+- Nộp mã, nguồn dữ liệu, seed, phiên bản thư viện, bảng dự báo–thực tế và phân tích sai số; không công bố chỉ một điểm số đẹp nhất.
+
+Tiêu chí đạt: tính toán tái lập được, không leakage, giả thiết được nêu rõ, diễn giải phù hợp dữ liệu và không đưa khuyến nghị tưới thực tế khi chưa hiệu chuẩn/kiểm chứng tại ruộng.
