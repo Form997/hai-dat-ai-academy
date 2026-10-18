@@ -77,3 +77,15 @@ Posterior predictive tích phân qua bất định tham số, MAP chỉ dùng m�
 - https://probml.github.io/pml-book/
 
 Ví dụ xác suất sư phạm tự tạo; không phải nghiên cứu y tế hay lời khuyên chẩn đoán.
+
+### 3.8. Quá trình ngẫu nhiên: chuỗi Markov và tình huống vận hành
+
+Một chuỗi Markov rời rạc thỏa P(X_(t+1)=j | X_t=i, X_(t−1),...)=P(X_(t+1)=j | X_t=i). Xét hai trạng thái giả lập của thiết bị tưới: B=bình thường và L=lỗi. Ma trận chuyển hàng P=[[0.8,0.2],[0.3,0.7]], mỗi hàng có tổng 1. Phân phối trạng thái p_(t+1)=p_t P. Nếu ban đầu p_0=[1,0], sau một bước p_1=[0.8,0.2], sau hai bước p_2=[0.70,0.30].
+
+Phân phối dừng π thỏa πP=π và π_B+π_L=1. Từ 0.2π_B=0.3π_L suy ra π=[0.6,0.4]. Đây là phân phối dài hạn của mô hình chuyển trạng thái đã giả định, KHÔNG phải tỷ lệ lỗi đo được của hệ thống thực. Cần dữ liệu đủ dài, kiểm tra giả định Markov, thay đổi theo mùa và độ bất định trước khi dùng dự báo bảo trì.
+
+Khi gặp lại: định nghĩa trạng thái không chồng lấn → đếm chuyển trạng thái theo thời gian → ước lượng từng hàng xác suất (nêu số lần quan sát) → kiểm tra hàng tổng 1 → đánh giá trên giai đoạn sau → theo dõi thay đổi chế độ. Nếu chưa có dữ liệu, chỉ mô phỏng, không đưa quyết định vận hành.
+
+Bài tập: tính p_2 khi p_0=[0,1]. Đáp án: p_1=[0.3,0.7], p_2=[0.45,0.55]. Kiểm tra πP=π bằng nhân ma trận.
+
+Nguồn: https://ocw.mit.edu/courses/6-262-discrete-stochastic-processes-spring-2011/

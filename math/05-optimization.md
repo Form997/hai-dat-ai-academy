@@ -76,3 +76,15 @@ SGD dùng minibatch nên cập nhật có nhiễu; Adam thích nghi theo moment 
 - https://docs.pytorch.org/docs/stable/optim.html
 
 Định lý được diễn giải có điều kiện; bài tập tự biên soạn. Không phải bản sao giáo trình Stanford.
+
+### 5.8. Tình huống lặp lại: tối ưu có giới hạn tài nguyên
+
+Ví dụ giả lập: chọn x (đơn vị tưới quy ước) để gần mục tiêu 3 nhất, nhưng nguồn cấp chỉ cho phép x≤1 và x≥0. Bài toán min (x−3)² trên 0≤x≤1. Vì hàm lồi nghiêm ngặt, nghiệm tối ưu là x*=1, f*=4.
+
+Đặt g₁(x)=x−1≤0 và g₂(x)=−x≤0. Lagrangian ℒ=(x−3)²+λ₁(x−1)+λ₂(−x), λ₁,λ₂≥0. Tại x*=1: điều kiện dừng 2(1−3)+λ₁−λ₂=0, bổ sung λ₂=0 (vì g₂(1)<0), suy ra λ₁=4. Tất cả điều kiện KKT được thỏa. Slater đúng vì x=0.5 làm cả hai bất đẳng thức nghiêm ngặt; trong bài toán lồi này có đối ngẫu mạnh và KKT đặc trưng nghiệm tối ưu.
+
+Khi gặp lại: định nghĩa biến/đơn vị → lập mục tiêu → viết ràng buộc vật lý → kiểm tra tính lồi và khả thi → kiểm tra điều kiện áp dụng KKT → giải và kiểm chứng ràng buộc → phân tích độ nhạy → thử kịch bản biên. Đây là ví dụ toán, KHÔNG phải công thức quyết định lượng tưới cây trồng.
+
+Bài tập: thay giới hạn trên thành 2, giải lại. Đáp án: x*=2, λ₁=2, λ₂=0, f*=1. Nếu ràng buộc không lồi, không được suy ra KKT là điều kiện đủ nói chung.
+
+Nguồn: https://stanford.edu/~boyd/cvxbook/

@@ -73,3 +73,13 @@ SVD làm rõ trị kỳ dị nhỏ và gần suy biến, nhưng thường tốn 
 - https://scikit-learn.org/stable/modules/decomposition.html
 
 Nội dung biên soạn độc lập dựa trên các khái niệm đã được giảng dạy trong tài liệu gốc; bài tập và lời giải do học viện tự xây dựng. Không khẳng định là giáo trình chính thức của MIT.
+
+### 1.8. Tình huống lặp lại: hai cảm biến đo cùng một đại lượng
+
+Dữ liệu giả lập: cảm biến A=[1,2,3], B=[2,4,6] (cùng đơn vị). Ma trận X có hai cột phụ thuộc tuyến tính, rank(X)=1; XᵀX suy biến. Vì vậy không thể ước lượng riêng hai hệ số bằng nghịch đảo thông thường. Nếu mục tiêu y=[3,6,9], có vô số nghiệm β₁+2β₂=3. Nghiệm chuẩn Euclid nhỏ nhất là β=[0.6,1.2] do β₁=3/5 và β₂=6/5.
+
+Khi gặp lại: (1) kiểm tra đơn vị và giá trị thiếu; (2) phát hiện cột trùng/tương quan gần 1; (3) kiểm tra rank và singular values; (4) dùng QR/SVD hoặc regularization; (5) kiểm tra sai số dự báo trên dữ liệu chưa thấy. Không kết luận hai cảm biến độc lập chỉ vì có hai cột.
+
+Bài tập: thay B bằng [2,4,6.01]; dự đoán điều gì xảy ra với condition number khi sai số đo nhỏ. Giải thích vì sao nên báo cáo độ ổn định của hệ số bên cạnh sai số dự báo. Dữ liệu ở đây là mô phỏng, không phải quan trắc thực địa.
+
+Nguồn phương pháp: https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html

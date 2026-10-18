@@ -53,3 +53,13 @@ Dùng dữ liệu giả lập theo ngày với các cột: ngày đo, độ ẩm
 - Nộp mã, nguồn dữ liệu, seed, phiên bản thư viện, bảng dự báo–thực tế và phân tích sai số; không công bố chỉ một điểm số đẹp nhất.
 
 Tiêu chí đạt: tính toán tái lập được, không leakage, giả thiết được nêu rõ, diễn giải phù hợp dữ liệu và không đưa khuyến nghị tưới thực tế khi chưa hiệu chuẩn/kiểm chứng tại ruộng.
+
+## Khung giáo trình cao cấp thực tiễn — áp dụng cho tình huống lặp lại
+
+Mỗi chương phải có: (1) tiên quyết và chuẩn đầu ra đo được; (2) định nghĩa, định lý, giả thiết và chứng minh hoặc phác thảo chứng minh; (3) ví dụ tính tay; (4) tình huống thực tế có đơn vị và nguồn dữ liệu; (5) mã thực hành tái lập; (6) bài tập ba mức cơ bản–vận dụng–phản biện; (7) đáp án và tiêu chí chấm; (8) danh mục lỗi thường gặp và quy trình xử lý khi tình huống tái diễn; (9) nguồn gốc học thuật; (10) điều kiện không được áp dụng kết quả.
+
+Một vấn đề thường gặp nhiều lần không nên chỉ giải một ví dụ. Người học phải luyện quy trình nhận diện → kiểm tra giả thiết → chọn mô hình → tính toán → đối chiếu baseline → kiểm thử trên dữ liệu mới → đánh giá rủi ro → ghi nhật ký thay đổi. Các tình huống có thể gặp lặp lại: cảm biến trùng thông tin, gradient sai, chuyển trạng thái thiết bị, rò rỉ dữ liệu theo thời gian, giới hạn nguồn lực.
+
+Đánh giá năng lực: giải thích giả thiết (20%), tính đúng và chứng minh (25%), thực hành tái lập (25%), đánh giá trên dữ liệu chưa thấy (20%), phân tích sai lệch và giới hạn (10%). Các tỷ trọng là đề xuất biên soạn, không phải quy định của một trường đại học.
+
+Mọi số liệu minh họa mới trong giáo trình được ghi rõ là giả lập; không tự coi là kết quả khảo nghiệm nông nghiệp. Bài học thực hành phải tránh hướng dẫn vận hành sản xuất dựa trên mô hình chưa được kiểm chứng tại hiện trường.
