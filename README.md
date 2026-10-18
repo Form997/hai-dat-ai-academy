@@ -1,6 +1,8 @@
-# 🌱 HAI ĐẤT AI ACADEMY
+# Hai Đất AI Academy — Học AI từ cơ bản đến nâng cao bằng tiếng Việt
 
-**Học, làm, kiểm chứng và chia sẻ AI — từ người mới tới chuyên sâu.**
+**Giáo trình trí tuệ nhân tạo thực hành: GitHub, Python, Machine Learning, Toán AI, RAG, tạo ảnh, nhạc và video AI.**
+
+Website: https://form997.github.io/hai-dat-ai-academy/ — [Tra cứu bài học](https://form997.github.io/hai-dat-ai-academy/catalog/).
 
 > Phiên bản 2.5 — nền tảng học tập web tĩnh với công cụ thực hành, không tuyên bố đã có API tạo ảnh/nhạc/video miễn phí vô hạn.
 

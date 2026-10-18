@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://form997.github.io/hai-dat-ai-academy/sitemap.xml
