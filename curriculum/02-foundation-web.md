@@ -1,18 +1,18 @@
-# Chương 2: HTML, CSS, JavaScript và web tĩnh
+# Chương 2: HTML, CSS, JavaScript và web tĩnh | Giáo trình AI V3.0 — Hai Đất AI Academy
 
 Trình độ: Cơ bản. Mục tiêu: hiểu đúng nguyên lý, tự thực hành và kiểm tra được bằng chứng thay vì chỉ học thuộc thuật ngữ.
 
 ## Kiến thức và diễn giải
 
-### 2.1. Nội dung trọng tâm
+### 2.1. Cấu trúc HTML và ngữ nghĩa
 
 HTML mô tả cấu trúc và ngữ nghĩa; CSS mô tả trình bày; JavaScript xử lý tương tác trên client.
 
-### 2.2. Nội dung trọng tâm
+### 2.2. CSS và bố cục đáp ứng
 
 Nút cần có hành vi thật; label gắn với input giúp truy cập bằng bàn phím và công nghệ hỗ trợ.
 
-### 2.3. Nội dung trọng tâm
+### 2.3. JavaScript và hành vi trình duyệt
 
 GitHub Pages phục vụ nội dung tĩnh; endpoint API bí mật phải ở dịch vụ backend riêng.
 
@@ -48,3 +48,11 @@ Tự đánh dấu khi có bằng chứng: (1) giải thích được thuật ng�
 - https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages
 
 Ghi chú: nội dung tiếng Việt và tình huống thực hành do dự án tự biên soạn; không có tuyên bố đã thực nghiệm thay người học. Các dịch vụ, phiên bản, quyền sử dụng phải đối chiếu tại thời điểm thực hiện.
+
+## Học tiếp và đối chiếu kiến thức
+
+- [Web và API](https://form997.github.io/hai-dat-ai-academy/knowledge/index.html?doc=02-web-api-security.md) — kiến thức nền, cách kiểm tra và nguồn tham khảo.
+- [Tra cứu giáo trình toàn học viện](https://form997.github.io/hai-dat-ai-academy/catalog/) — tìm theo chủ đề và tình huống thực hành.
+- [Toán cho AI V3.1](https://form997.github.io/hai-dat-ai-academy/math/) — các nền tảng toán học dùng trong mô hình AI.
+
+Các đường dẫn nguồn ở mục «Nguồn chính thức và nghiên cứu gốc» dùng để đối chiếu khái niệm, không hàm ý học viện được đơn vị nguồn chứng nhận. Ví dụ và bài tập trong chương do dự án tự biên soạn.
