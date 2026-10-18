@@ -76,3 +76,15 @@ Nested CV giúp đánh giá ít lạc quan hơn khi hyperparameter tuning; p-val
 - https://scikit-learn.org/stable/modules/model_evaluation.html
 
 Ví dụ tự biên soạn, không phải kết quả đo đạc hiện trường.
+
+### 4.8. Tình huống lặp lại: đánh giá dự báo theo thời gian
+
+Giả sử có 100 ngày dữ liệu giả lập về độ ẩm đất và thời tiết. Nếu dự báo ngày t+1, không được dùng thông tin chỉ có ở ngày t+1 khi xây dựng đặc trưng. Chia theo thời gian: 60 ngày đầu train, 20 ngày tiếp validation, 20 ngày cuối test. Chỉ fit trung bình, độ lệch chuẩn, phép điền khuyết và chọn siêu tham số trên train/validation; test để đánh giá cuối.
+
+Baseline dự báo độ ẩm ngày mai bằng giá trị hôm nay. Nếu trên 3 ngày kiểm tra, giá trị thật [20,22,19] và dự báo [21,20,20] (% thể tích), sai số tuyệt đối [1,2,1], MAE=4/3≈1.333 điểm phần trăm; RMSE=sqrt((1+4+1)/3)=sqrt(2)≈1.414 điểm phần trăm. Không gọi đây là độ chính xác trên dữ liệu thực.
+
+Phân biệt suy luận: công thức Student-t cho trung bình mẫu với phương sai chưa biết là chính xác dưới giả thiết mẫu độc lập từ tổng thể chuẩn; với phân phối không chuẩn, tính hợp lệ xấp xỉ cần điều kiện và kiểm tra, nhất là khi chuỗi thời gian có tự tương quan. Không dùng t-interval độc lập nguyên xi cho quan trắc phụ thuộc theo ngày.
+
+Khi gặp lại: định nghĩa mục tiêu → kiểm tra timestamp → lập baseline → chia theo thời gian → chống leakage → báo cáo MAE/RMSE theo từng giai đoạn → kiểm tra drift. Bài tập: so sánh mô hình có MAE=1.2 với baseline trên cùng test; giải thích vì sao MAE thấp chưa đủ chứng minh hữu ích vận hành.
+
+Nguồn: https://scikit-learn.org/stable/modules/cross_validation.html

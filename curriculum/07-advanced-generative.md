@@ -1,18 +1,18 @@
-# Chương 7: Đánh giá AI tạo ảnh, nhạc và video
+# Chương 7: Đánh giá AI tạo ảnh, nhạc và video | Giáo trình AI V3.0 — Hai Đất AI Academy
 
 Trình độ: Chuyên sâu. Mục tiêu: hiểu đúng nguyên lý, tự thực hành và kiểm tra được bằng chứng thay vì chỉ học thuộc thuật ngữ.
 
 ## Kiến thức và diễn giải
 
-### 7.1. Nội dung trọng tâm
+### 7.1. Tạo sinh hình ảnh bằng AI
 
 Diffusion tạo mẫu bằng chuỗi bước khử nhiễu; đây là một họ mô hình, không đại diện cho mọi công cụ AI.
 
-### 7.2. Nội dung trọng tâm
+### 7.2. Tạo sinh âm thanh và âm nhạc
 
 Đánh giá đầu ra cần đo độ bám yêu cầu, tính nhất quán, lỗi hình học/âm thanh và quyền sử dụng.
 
-### 7.3. Nội dung trọng tâm
+### 7.3. Video AI và tiêu chí đánh giá
 
 Không suy luận giấy phép thương mại của ứng dụng từ một bài báo về kỹ thuật mô hình.
 
@@ -48,3 +48,11 @@ Tự đánh dấu khi có bằng chứng: (1) giải thích được thuật ng�
 - https://arxiv.org/abs/2301.11325
 
 Ghi chú: nội dung tiếng Việt và tình huống thực hành do dự án tự biên soạn; không có tuyên bố đã thực nghiệm thay người học. Các dịch vụ, phiên bản, quyền sử dụng phải đối chiếu tại thời điểm thực hiện.
+
+## Học tiếp và đối chiếu kiến thức
+
+- [AI tạo sinh](https://form997.github.io/hai-dat-ai-academy/knowledge/index.html?doc=07-generative-media.md) — kiến thức nền, cách kiểm tra và nguồn tham khảo.
+- [Tra cứu giáo trình toàn học viện](https://form997.github.io/hai-dat-ai-academy/catalog/) — tìm theo chủ đề và tình huống thực hành.
+- [Toán cho AI V3.1](https://form997.github.io/hai-dat-ai-academy/math/) — các nền tảng toán học dùng trong mô hình AI.
+
+Các đường dẫn nguồn ở mục «Nguồn chính thức và nghiên cứu gốc» dùng để đối chiếu khái niệm, không hàm ý học viện được đơn vị nguồn chứng nhận. Ví dụ và bài tập trong chương do dự án tự biên soạn.

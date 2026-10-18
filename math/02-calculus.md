@@ -75,3 +75,13 @@ Reverse-mode truyền một covector từ đầu ra về toàn bộ tham số tr
 - https://www.deeplearningbook.org/
 
 Các bài tập do học viện biên soạn; không phải trích nguyên văn bài giảng.
+
+### 2.8. Tình huống lặp lại: kiểm tra gradient trước khi huấn luyện
+
+Mô hình hai tầng vô hướng: h=wx, dự báo y_hat=vh, mất mát L=(y_hat−t)²/2. Quy tắc dây chuyền: dL/dv=(vwx−t)wx; dL/dw=(vwx−t)vx. Với x=2, w=1, v=3, t=4: y_hat=6, L=2, dL/dv=4, dL/dw=12.
+
+Kiểm tra số bằng sai phân trung tâm D_w=[L(w+ε)−L(w−ε)]/(2ε), tương tự cho v; chọn ε=10^−5 và so sánh sai số tương đối. Với hàm trơn này, gradient số phải gần [12,4]. Không dùng kiểm tra sai phân ngay tại điểm gãy của ReLU và không mặc định ε nhỏ tùy ý luôn tốt vì sai số làm tròn.
+
+Khi gặp lại: ghi rõ computational graph → đạo hàm từng cạnh → backprop → so sánh sai phân → thử nhiều bộ tham số → mới tối ưu. Bài tập: thay t=6 và giải thích gradient bằng 0; thử t=5 và kiểm chứng lại.
+
+Nguồn: https://docs.pytorch.org/docs/stable/autograd.html

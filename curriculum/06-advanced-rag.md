@@ -1,18 +1,18 @@
-# Chương 6: Transformer, truy xuất tài liệu và RAG
+# Chương 6: Transformer, truy xuất tài liệu và RAG | Giáo trình AI V3.0 — Hai Đất AI Academy
 
 Trình độ: Chuyên sâu. Mục tiêu: hiểu đúng nguyên lý, tự thực hành và kiểm tra được bằng chứng thay vì chỉ học thuộc thuật ngữ.
 
 ## Kiến thức và diễn giải
 
-### 6.1. Nội dung trọng tâm
+### 6.1. Transformer và biểu diễn ngữ cảnh
 
 Transformer dựa trên cơ chế attention; token hóa thay văn bản thành các đơn vị phù hợp mô hình.
 
-### 6.2. Nội dung trọng tâm
+### 6.2. Truy xuất tài liệu và tạo câu trả lời
 
 RAG kết hợp truy xuất nguồn ngoài với sinh câu trả lời; tính đúng phụ thuộc cả bước tìm và tổng hợp.
 
-### 6.3. Nội dung trọng tâm
+### 6.3. Kiểm chứng dẫn chứng và đánh giá RAG
 
 Đánh giá retrieval (tìm đúng bằng chứng) tách khỏi faithfulness (câu trả lời bám đúng bằng chứng).
 
@@ -48,3 +48,11 @@ Tự đánh dấu khi có bằng chứng: (1) giải thích được thuật ng�
 - https://arxiv.org/abs/2005.11401
 
 Ghi chú: nội dung tiếng Việt và tình huống thực hành do dự án tự biên soạn; không có tuyên bố đã thực nghiệm thay người học. Các dịch vụ, phiên bản, quyền sử dụng phải đối chiếu tại thời điểm thực hiện.
+
+## Học tiếp và đối chiếu kiến thức
+
+- [Transformer và RAG](https://form997.github.io/hai-dat-ai-academy/knowledge/index.html?doc=06-transformers-llm.md) — kiến thức nền, cách kiểm tra và nguồn tham khảo.
+- [Tra cứu giáo trình toàn học viện](https://form997.github.io/hai-dat-ai-academy/catalog/) — tìm theo chủ đề và tình huống thực hành.
+- [Toán cho AI V3.1](https://form997.github.io/hai-dat-ai-academy/math/) — các nền tảng toán học dùng trong mô hình AI.
+
+Các đường dẫn nguồn ở mục «Nguồn chính thức và nghiên cứu gốc» dùng để đối chiếu khái niệm, không hàm ý học viện được đơn vị nguồn chứng nhận. Ví dụ và bài tập trong chương do dự án tự biên soạn.
