@@ -6,3 +6,9 @@
 - V3.5: mẫu storyboard/nhạc, localStorage; KHÔNG sinh media. Cần API nhà cung cấp và kiểm tra giấy phép.
 
 Tất cả mô-đun là nền tảng thực hành và tài liệu. Không sử dụng dữ liệu cá nhân, khóa hoặc token trong prompt công khai.
+
+## V3.6 — Nâng cấp toàn diện chất và lượng
+
+- [Mở V3.6](./v36.html): chuẩn hóa học thuật, mã thực hành tái lập, bài tập thực tiễn, kiểm định nguồn và tra cứu.
+- Tình trạng: bản khởi đầu; chưa coi các hạng mục trong lộ trình là đã hoàn tất.
+- [Quy định chất lượng nội dung](../docs/CONTENT-QUALITY-SEO.md).
