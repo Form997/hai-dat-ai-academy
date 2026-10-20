@@ -2,7 +2,7 @@
 
 ## Phạm vi và giới hạn
 
-Hệ thống có học liệu V1–V3.5, nhưng chưa thể tuyên bố mọi bài đã được phản biện khoa học, mọi URL đã được kiểm tra trực tiếp hoặc công cụ AI sẽ giới thiệu học viện. Các tiêu đề, mô tả SEO, sitemap và dữ liệu có cấu trúc chỉ giúp máy tìm kiếm hiểu trang; không bảo đảm xếp hạng.
+Hệ thống có học liệu V1–V3.6 (V3.6 đang phát triển), nhưng chưa thể tuyên bố mọi bài đã được phản biện khoa học, mọi URL đã được kiểm tra trực tiếp hoặc công cụ AI sẽ giới thiệu học viện. Các tiêu đề, mô tả SEO, sitemap và dữ liệu có cấu trúc chỉ giúp máy tìm kiếm hiểu trang; không bảo đảm xếp hạng.
 
 ## Quy trình biên tập từng bài
 
@@ -44,3 +44,7 @@ Hệ thống có học liệu V1–V3.5, nhưng chưa thể tuyên bố mọi b�
 2. Bổ sung ví dụ mã thực sự chạy được, kiểm thử số học và đáp án chi tiết cho các tình huống nâng cao.
 3. Rà soát từng URL nguồn bằng truy cập thực tế và đối chiếu đúng luận điểm; lưu bằng chứng kiểm định.
 4. Kiểm tra sitemap và trạng thái index trên các công cụ tìm kiếm khi có quyền chủ sở hữu.
+
+## Sổ kiểm định nguồn đã đối chiếu
+
+Xem [knowledge/SOURCES.md](../knowledge/SOURCES.md), phần *Kiểm định nguồn V3.6*. Việc có đường dẫn chính thức chưa thay thế đánh giá toàn văn và kiểm thử thực nghiệm. COPE yêu cầu công khai cách dùng AI; người biên soạn chịu trách nhiệm với nội dung cuối cùng.
