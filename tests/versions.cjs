@@ -10,3 +10,20 @@ for(const route of ['#courses','./knowledge/index.html','./curriculum/index.html
  if(route.startsWith('./'))assert.ok(require('node:fs').existsSync(require('node:path').join(root,route)),'Target missing: '+route);
 }
 assert.ok(homepage.includes('id="learning-path"'),'Missing unified learning section');
+
+// V3.6 static lesson publishing: every public lesson has an HTML route and a sitemap entry.
+const sitemap=read('sitemap.xml');
+const lessonFiles=[
+'01-beginner/01-github','01-beginner/02-security','02-web/01-html','02-web/02-javascript',
+'03-ai-media/01-image','03-ai-media/02-music','03-ai-media/03-video',
+'04-backend/01-api','04-backend/02-deploy','05-advanced/01-models',
+'05-advanced/02-systems','06-research/01-reproducibility'];
+for(const lesson of lessonFiles){
+ const html=read('study/'+lesson+'.html');
+ assert.ok(html.includes('<h1>'),'Missing lesson heading: '+lesson);
+ assert.ok(html.includes('rel="canonical"'),'Missing canonical: '+lesson);
+ assert.ok(html.includes('Nguồn để đối chiếu'),'Missing source section: '+lesson);
+ assert.ok(sitemap.includes('/study/'+lesson+'.html'),'Missing sitemap entry: '+lesson);
+}
+assert.ok(read('study/index.html').includes('12 bài học'));
+console.log('PASS V3.6: 12 HTML lesson pages and sitemap entries');
