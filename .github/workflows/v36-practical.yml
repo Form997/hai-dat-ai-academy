@@ -1,0 +1,15 @@
+name: V3.6 reproducible agriculture lab
+on:
+  push:
+    paths: ['practical/**', '.github/workflows/v36-practical.yml']
+  pull_request:
+    paths: ['practical/**', '.github/workflows/v36-practical.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s practical -p 'test_*.py' -v
