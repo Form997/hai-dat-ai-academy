@@ -31,7 +31,7 @@ def retrieve(query, docs, limit=3):
     results = []
     for d in docs:
         overlap = tokens & words(d["title"] + " " + d["text"])
-        if len(overlap) >= 2 and len(overlap)/len(tokens) >= 0.5:
+        if len(overlap) >= 2 and len(overlap)/len(tokens) >= 0.35:
             results.append((len(overlap)/len(tokens), len(overlap), d))
     results.sort(key=lambda x: (-x[0], -x[1], x[2]["id"]))
     return [d for _, _, d in results[:limit]]
