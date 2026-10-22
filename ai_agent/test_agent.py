@@ -3,7 +3,7 @@ import json
 import os
 import unittest
 from unittest.mock import patch
-from core import words, retrieve, offline_answer, respond, online_answer, load_docs
+from core import words, retrieve, offline_answer, respond, online_answer, load_docs, local_llm_answer
 
 class AgentTests(unittest.TestCase):
     def setUp(self):
@@ -50,6 +50,33 @@ class AgentTests(unittest.TestCase):
             r=online_answer("ET0 ETc Kc",self.docs,opener=fake_open)
             self.assertEqual(r["mode"],"online")
             self.assertIn("Tra loi thu nghiem",r["answer"])
+
+    def test_local_llm_mocked(self):
+        class Response:
+            def __enter__(self): return self
+            def __exit__(self,*args): pass
+            def read(self,n): return b'{"response":"Tra loi tu Ollama"}'
+        def fake(req,timeout):
+            self.assertEqual(req.full_url,"http://127.0.0.1:11434/api/generate")
+            self.assertEqual(timeout,90)
+            self.assertEqual(json.loads(req.data)["stream"],False)
+            return Response()
+        with patch.dict(os.environ,{"HAIDAT_LOCAL_MODEL":"test:0.5b"}):
+            r=respond("ET0 ETc Kc","local_llm",self.docs,opener=fake)
+            self.assertEqual(r["mode"],"local_llm")
+            self.assertIn("Ollama",r["answer"])
+
+    def test_local_missing_model(self):
+        with patch.dict(os.environ,{"HAIDAT_LOCAL_MODEL":""}):
+            with self.assertRaises(ValueError):
+                respond("ET0 ETc Kc","local_llm",self.docs)
+
+    def test_auto_local_fallback(self):
+        def fail(req,timeout): raise OSError("Ollama unavailable")
+        with patch.dict(os.environ,{"HAIDAT_API_KEY":"","HAIDAT_MODEL":"","HAIDAT_LOCAL_MODEL":"test:0.5b"}):
+            r=respond("ET0 ETc Kc","auto",self.docs,opener=fail)
+            self.assertEqual(r["mode"],"offline")
+            self.assertIn("cục bộ",r["notice"])
 
     def test_auto_fallback(self):
         def fail(req,timeout): raise OSError("offline")
