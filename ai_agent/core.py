@@ -119,8 +119,15 @@ def respond(query, mode="auto", docs=None, opener=None):
         try:
             return online_answer(query, docs, opener=opener)
         except (OSError, ValueError, KeyError, IndexError, json.JSONDecodeError):
+            if os.environ.get("HAIDAT_LOCAL_MODEL"):
+                try:
+                    result = local_llm_answer(query, docs, opener=opener)
+                    result["notice"] = "Online lỗi; đã chuyển sang Ollama cục bộ."
+                    return result
+                except (OSError, ValueError, KeyError, json.JSONDecodeError):
+                    pass
             result = offline_answer(query, docs)
-            result["notice"] = "Không dùng được dịch vụ online; đã chuyển sang truy xuất offline."
+            result["notice"] = "Online và Ollama không khả dụng; đã chuyển sang tra cứu offline."
             return result
     if os.environ.get("HAIDAT_LOCAL_MODEL"):
         try:
