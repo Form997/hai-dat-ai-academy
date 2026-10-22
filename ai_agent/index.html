@@ -1,0 +1,14 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HAI ĐẤT AI — Trợ lý offline và online</title><style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem;line-height:1.6;background:#f5f8f5;color:#162b20}main{background:white;padding:1.5rem;border-radius:14px}textarea{width:100%;box-sizing:border-box;min-height:110px;padding:12px;font:inherit}button,select{font:inherit;padding:10px;margin:10px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f5f2;padding:12px}a{overflow-wrap:anywhere}#status{color:#345}h1{margin-bottom:0}</style></head><body><main><h1>🌱 HAI ĐẤT AI</h1><p>Trợ lý tiếng Việt chạy trên máy cá nhân. <strong>Offline</strong> tìm bằng chứng trong tài liệu mẫu; <strong>Online</strong> dùng API khi bạn tự cấu hình; <strong>Tự động</strong> ưu tiên online và có thể chuyển sang offline.</p><label for="mode">Chế độ</label> <select id="mode"><option value="auto">Tự động</option><option value="offline">Offline</option><option value="online">Online</option></select><label for="question"><p>Câu hỏi</p></label><textarea id="question" maxlength="1500" placeholder="Ví dụ: ET0 và ETc khác nhau như thế nào?"></textarea><p><button id="ask">Gửi câu hỏi</button></p><p id="status" role="status"></p><pre id="answer" aria-live="polite"></pre><div id="sources"></div><p><small>Không nhập mật khẩu, khóa API hoặc dữ liệu nhạy cảm. Chế độ online gửi câu hỏi và bằng chứng liên quan tới nhà cung cấp API. Chưa có mô hình LLM cục bộ.</small></p></main><script>
+'use strict';
+const $=id=>document.getElementById(id);
+$('ask').addEventListener('click',async()=>{
+ const q=$('question').value.trim();if(!q){$('status').textContent='Hãy nhập câu hỏi.';return;}
+ $('ask').disabled=true;$('status').textContent='Đang xử lý...';$('answer').textContent='';$('sources').replaceChildren();
+ try{
+  const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,mode:$('mode').value})});
+  const data=await r.json();if(!r.ok)throw Error(data.error||'Không xử lý được');
+  $('answer').textContent=data.answer;$('status').textContent='Chế độ: '+data.mode+(data.notice?' · '+data.notice:'');
+  for(const s of data.sources||[]){const p=document.createElement('p'),a=document.createElement('a');a.href=s.url;a.rel='noopener noreferrer';a.textContent=s.id+' — '+s.title;p.append(a);$('sources').append(p);}
+ }catch(e){$('status').textContent=e.message}finally{$('ask').disabled=false}
+});
+</script></body></html>
