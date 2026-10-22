@@ -63,3 +63,17 @@ Thử offline với câu hỏi `ET0 và ETc khác nhau như thế nào?`; kết 
 - V4: kết nối PCI kiểm định vùng trồng, quản lý dữ liệu cảm biến, quyền người dùng và nhật ký kiểm toán.
 
 Tài liệu tham khảo: [Python HTTP server](https://docs.python.org/3/library/http.server.html), [Python urllib](https://docs.python.org/3/library/urllib.request.html), [OpenAI API](https://platform.openai.com/docs/api-reference/chat), [OWASP API Security](https://owasp.org/API-Security/). Python `http.server` chỉ phù hợp thử nghiệm cục bộ, không phải máy chủ sản xuất.
+
+## 6. AI cục bộ thật với Ollama (V2, tùy chọn)
+
+Bản V2 bổ sung chế độ **AI cục bộ Ollama**, khác với chế độ **Tra cứu offline** vốn chỉ lấy đoạn chứng cứ. Mã chỉ gọi `http://127.0.0.1:11434/api/generate`, không kết nối mô hình trên Internet khi đang trả lời. Ollama là phần mềm bên ngoài; việc **cài đặt và tải mô hình lần đầu cần Internet**. Không mặc định cài hay tải mô hình.
+
+1. Cài Ollama từ https://ollama.com/download và khởi động Ollama trên máy.
+2. Chọn một mô hình nhỏ được Ollama hỗ trợ và xem yêu cầu bộ nhớ tại trang model. Ví dụ thử nghiệm: `ollama pull qwen2.5:0.5b`. Tên model, khả năng hỗ trợ và dung lượng cần xác minh trước khi tải.
+3. Trong **PowerShell**, đặt `$env:HAIDAT_LOCAL_MODEL="qwen2.5:0.5b"` rồi chạy `py -3 ai_agent/server.py`.
+4. Mở http://127.0.0.1:8765 và chọn **AI cục bộ Ollama**. Nếu muốn máy tự chuyển từ online sang offline khi không có khóa, chọn **Tự động**; khi không cấu hình online, hệ thống sẽ thử Ollama trước rồi mới tra cứu offline.
+5. Kiểm thử: `py -3 -m unittest discover -s ai_agent -p "test_*.py" -v`.
+
+**Máy RAM 4 GB:** chỉ nên thử model lượng tử hóa rất nhỏ và đóng ứng dụng khác; không bảo đảm tốc độ hoặc đủ RAM. Không thể suy ra tốc độ thực tế nếu chưa đo trên máy. Câu trả lời của mô hình nhỏ có thể sai, không dùng để quyết định sản xuất.
+
+**Riêng tư:** API cloud chỉ nhận dữ liệu khi chọn Online hoặc Tự động có cấu hình cloud; chế độ local_llm gọi loopback. Tránh cài proxy/tunnel đưa Ollama hoặc máy chủ này lên mạng công cộng. Máy chủ thử nghiệm không có xác thực.
