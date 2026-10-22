@@ -1,0 +1,9 @@
+[
+ {"query":"Bảo vệ mật khẩu và token GitHub thế nào?","expected_id":"GITHUB-SEC-01"},
+ {"query":"Xác thực và phân quyền API cần gì?","expected_id":"OWASP-API-01"},
+ {"query":"Cross validation và tập test độc lập tránh rò rỉ dữ liệu?","expected_id":"SKLEARN-CV-01"},
+ {"query":"ET0 và ETc khác nhau, hệ số Kc?","expected_id":"FAO56-ET0-01"},
+ {"query":"Retrieval augmented generation kết hợp truy xuất tài liệu?","expected_id":"RAG-LEWIS-01"},
+ {"query":"Tỷ lệ trúng xổ số tuần tới chính xác bao nhiêu?","expected_id":null},
+ {"query":"Giá rau tại chợ đầu mối Thanh Hóa sáng nay là bao nhiêu?","expected_id":null}
+]
