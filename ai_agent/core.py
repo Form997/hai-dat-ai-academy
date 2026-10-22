@@ -136,11 +136,4 @@ def respond(query, mode="auto", docs=None, opener=None):
             result = offline_answer(query, docs)
             result["notice"] = "Không dùng được mô hình cục bộ; đã chuyển sang tra cứu tài liệu offline."
             return result
-    if os.environ.get("HAIDAT_LOCAL_MODEL"):
-        try:
-            return local_llm_answer(query, docs, opener=opener)
-        except (OSError, ValueError, KeyError, json.JSONDecodeError):
-            result = offline_answer(query, docs)
-            result["notice"] = "Không dùng được mô hình cục bộ; đã chuyển sang tra cứu tài liệu offline."
-            return result
     return offline_answer(query, docs)
