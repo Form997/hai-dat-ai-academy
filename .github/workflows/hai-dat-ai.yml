@@ -1,0 +1,15 @@
+name: HAI DAT AI hybrid tests
+on:
+  push:
+    paths: ['ai_agent/**', '.github/workflows/hai-dat-ai.yml']
+  pull_request:
+    paths: ['ai_agent/**', '.github/workflows/hai-dat-ai.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s ai_agent -p 'test_*.py' -v
