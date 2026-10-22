@@ -56,3 +56,15 @@ Ghi chú: nội dung tiếng Việt và tình huống thực hành do dự án t
 - [Toán cho AI V3.1](https://form997.github.io/hai-dat-ai-academy/math/) — các nền tảng toán học dùng trong mô hình AI.
 
 Các đường dẫn nguồn ở mục «Nguồn chính thức và nghiên cứu gốc» dùng để đối chiếu khái niệm, không hàm ý học viện được đơn vị nguồn chứng nhận. Ví dụ và bài tập trong chương do dự án tự biên soạn.
+
+## Phòng thực hành RAG có đánh giá V3.8
+
+[Bài thực hành truy xuất có dẫn chứng, đánh giá và từ chối khi thiếu nguồn](../practical/README-rag-v38.md) có bộ nguồn 5 đoạn minh họa, ID tài liệu, 7 câu hỏi đánh giá và mã kiểm thử tự động.
+
+Phân biệt bốn khái niệm:
+- **Retrieval recall@k:** trong số câu hỏi có bằng chứng được gán nhãn, bao nhiêu câu có ít nhất một nguồn đúng trong top-k?
+- **Citation correctness:** đường dẫn được dẫn có thực sự hỗ trợ mệnh đề hay không? Cần người kiểm định hoặc gold labels.
+- **Faithfulness:** nội dung câu trả lời có bị suy diễn vượt chứng cứ hay không? Bản thực hành chưa có mô hình sinh nên chưa đo chỉ số này.
+- **Abstention:** khi không có bằng chứng, hệ thống có từ chối thay vì bịa thông tin không?
+
+Đối với tình huống nông nghiệp, phải phân biệt quy chuẩn, nghiên cứu thực nghiệm, diễn giải giáo trình và dữ liệu đo thực địa. Không sử dụng kết quả truy xuất từ khóa để ra quyết định tưới, bón phân hay kiểm định vùng trồng.
