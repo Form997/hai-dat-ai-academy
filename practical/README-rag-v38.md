@@ -8,7 +8,7 @@
 2. **Retrieval:** `versions/rag-core.js` tách token tiếng Việt, chuẩn hóa dấu, tính độ phủ từ khóa và xếp hạng. Đây là **lexical matching**, không phải semantic embeddings.
 3. **Evidence gate:** yêu cầu ít nhất 2 token trùng và độ phủ từ khóa tối thiểu 50%. Đây là heuristic để học, không phải ngưỡng tin cậy đã hiệu chuẩn.
 4. **Presentation:** `versions/rag.js` dùng DOM an toàn và hiển thị ID, nguồn, đoạn chứng cứ. Không sinh kết luận vượt nguồn.
-5. **Evaluation:** `versions/rag-eval.json` có 5 câu hỏi có nguồn kỳ vọng và 2 câu hỏi ngoài phạm vi.
+5. **Evaluation:** `versions/rag-eval.json` có 7 câu hỏi có nguồn kỳ vọng và 6 câu hỏi cần từ chối.
 
 ## Chạy kiểm thử
 
@@ -16,7 +16,15 @@
 node tests/rag-evidence.cjs
 ```
 
-`recall_at_5` ở bài tập này là tỷ lệ trên **toàn bộ 7 câu hỏi**, gồm 2 câu hỏi không có đáp án; vì vậy nó **không phải Recall@5 chuẩn** của một benchmark IR. Muốn đo Recall@5 chuẩn, mẫu số phải là số câu hỏi có bằng chứng đúng trong corpus, và cần gold labels độc lập. Chỉ số hiển thị trong bài tập là minh họa, không nên so sánh trực tiếp với công trình khác.
+Các chỉ số được tách riêng:
+- `hit_at_5`: tỷ lệ câu có nhãn nguồn đúng được tìm thấy trong top-5 của `search()`. Với một nguồn đúng mỗi câu, đây là hit rate; chưa phải đánh giá recall đầy đủ với nhiều nguồn liên quan.
+- `mrr_at_5`: trung bình nghịch đảo thứ hạng nguồn đúng trên câu có đáp án.
+- `false_refusals`, `false_acceptances`: từ chối sai và chấp nhận sai theo nhãn.
+- `abstention_precision`, `abstention_recall`: độ chính xác và độ bao phủ từ chối; mẫu số bằng 0 trả `null`.
+
+Kết quả qua ngưỡng ở `results`; ứng viên từ khóa chưa đủ chứng cứ nằm riêng ở `candidates`. Không tính ứng viên thành bằng chứng đã chấp nhận.
+
+Bộ đánh giá hiện có 13 câu (7 có nguồn, 6 cần từ chối), thêm test chữ Đ, stopword và tài liệu gây nhiễu. Đây vẫn là tập hồi quy do dự án tự viết, chưa có tập kiểm định độc lập hay hiệu chuẩn ngưỡng. Các mẫu hỏi số liệu, giá, thời điểm và địa phương được chặn bảo thủ vì corpus không chứa dữ liệu đó; quy tắc này chưa hiểu ngữ nghĩa và có thể từ chối quá mức hoặc bỏ sót cách diễn đạt khác. Chưa đo citation correctness hay faithfulness.
 
 ## Bài tập nâng cao
 
@@ -39,3 +47,4 @@ node tests/rag-evidence.cjs
 - ALLEA, *European Code of Conduct for Research Integrity*, 2023: https://doi.org/10.26356/ECOC
 
 Tất cả ví dụ tiếng Việt do dự án tự viết. Chưa có kiểm định độc lập đối với toàn bộ diễn giải.
+

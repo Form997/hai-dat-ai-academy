@@ -6,8 +6,8 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  else root.AcademyRAG=api;
 })(typeof globalThis==='object'?globalThis:this,function(){
- const stop=new Set(['nào','đâu','trong','được','không','những','cách','làm','sao','với','cho','của','là','có','và','cần','một','các','theo','tại','khi','thế','nào']);
- function normalize(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase()}
+ const stop=new Set(['nào','đâu','trong','được','không','những','cách','làm','sao','với','cho','của','là','có','và','cần','một','các','theo','tại','khi','thế','nào'].map(normalize));
+ function normalize(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase()}
  function tokens(s){return [...new Set((normalize(s).match(/[a-z0-9]+/g)||[]).filter(w=>w.length>=2&&!stop.has(w)))]}
  function search(docs,query,limit=5){
   const words=tokens(query);
@@ -21,25 +21,30 @@
  }
  function answer(docs,query){
   const ranked=search(docs,query);
-  // Ngưỡng cố ý bảo thủ: không suy ra kết luận chỉ vì một từ khóa trùng.
-  const qualified=ranked.filter(x=>x.matched.length>=2&&x.coverage>=0.5);
-  if(!qualified.length)return {status:'insufficient_evidence',message:'Chưa đủ bằng chứng trong bộ tài liệu mẫu. Không sinh câu trả lời.',results:ranked};
-  return {status:'evidence_found',message:'Tìm thấy đoạn diễn giải phù hợp để người học đối chiếu nguồn gốc. Chưa xác minh trực tiếp trang nguồn tại thời điểm truy vấn.',results:qualified};
+  // Lexical relevance is not proof that a requested fact is supported.
+  // This small corpus has no quantitative, live or local observations.
+  const q=normalize(query);
+  const unsupportedDetail=/\b(bao nhieu|may|gia|hom nay|sang nay|hien tai|tuan toi|thanh hoa|tai ruong)\b/.test(q);
+  const qualified=unsupportedDetail?[]:ranked.filter(x=>x.matched.length>=2&&x.coverage>=0.5);
+  if(!qualified.length)return {status:'insufficient_evidence',message:'Chưa đủ bằng chứng trong bộ tài liệu mẫu. Không sinh câu trả lời.',results:[],candidates:ranked};
+  return {status:'evidence_found',message:'Tìm thấy đoạn liên quan để đối chiếu. Độ phủ từ khóa không xác nhận tính đúng hay đầy đủ của câu trả lời; chưa xác minh trực tiếp nguồn gốc.',results:qualified,candidates:ranked};
  }
  function metrics(cases,docs){
-  let hit=0,answered=0,correctRefusal=0;
+  let hits=0,answerable=0,answered=0,correctRefusal=0,falseAcceptance=0,falseRefusal=0,reciprocalRank=0;
   const rows=cases.map(c=>{
-   const result=answer(docs,c.query);
-   const ids=result.results.map(x=>x.doc.id);
-   const top=ids[0]||null;
-   const retrieved=!!c.expected_id&&ids.includes(c.expected_id);
-   const shouldRefuse=c.expected_id===null;
-   if(retrieved)hit++;
-   if(result.status==='evidence_found')answered++;
-   if(shouldRefuse&&result.status==='insufficient_evidence')correctRefusal++;
-   return {query:c.query,expected_id:c.expected_id,top_id:top,retrieved,refused:result.status==='insufficient_evidence'};
+   const ranked=search(docs,c.query),result=answer(docs,c.query);
+   const ids=ranked.map(x=>x.doc.id),positive=!!c.expected_id;
+   const rank=positive?ids.indexOf(c.expected_id)+1:0;
+   const refused=result.status==='insufficient_evidence';
+   if(positive){answerable++;if(rank){hits++;reciprocalRank+=1/rank;}if(refused)falseRefusal++;}
+   else if(refused)correctRefusal++;else falseAcceptance++;
+   if(!refused)answered++;
+   return {query:c.query,expected_id:c.expected_id,top_id:ids[0]||null,retrieved:rank>0,refused};
   });
-  return {total:cases.length,recall_at_5:hit/cases.length,answer_rate:answered/cases.length,correct_refusals:correctRefusal,rows};
+  const unanswerable=cases.length-answerable;
+  const ratio=(n,d)=>d?n/d:null;
+  return {total:cases.length,answerable,unanswerable,hit_at_5:ratio(hits,answerable),mrr_at_5:ratio(reciprocalRank,answerable),answer_rate:ratio(answered,cases.length),correct_refusals:correctRefusal,false_acceptances:falseAcceptance,false_refusals:falseRefusal,abstention_precision:ratio(correctRefusal,correctRefusal+falseRefusal),abstention_recall:ratio(correctRefusal,unanswerable),rows};
  }
  return {normalize,tokens,search,answer,metrics};
 });
+
