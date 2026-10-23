@@ -59,12 +59,13 @@ Các đường dẫn nguồn ở mục «Nguồn chính thức và nghiên cứu
 
 ## Phòng thực hành RAG có đánh giá V3.8
 
-[Bài thực hành truy xuất có dẫn chứng, đánh giá và từ chối khi thiếu nguồn](../practical/README-rag-v38.md) có bộ nguồn 5 đoạn minh họa, ID tài liệu, 7 câu hỏi đánh giá và mã kiểm thử tự động.
+[Bài thực hành truy xuất có dẫn chứng, đánh giá và từ chối khi thiếu nguồn](../practical/README-rag-v38.md) có bộ nguồn 5 đoạn minh họa, ID tài liệu, 13 câu hỏi hồi quy, 16 câu thách thức, 8 tài liệu gây nhiễu tổng hợp và mã kiểm thử tự động.
 
 Phân biệt bốn khái niệm:
-- **Retrieval recall@k:** trong số câu hỏi có bằng chứng được gán nhãn, bao nhiêu câu có ít nhất một nguồn đúng trong top-k?
+- **Retrieval Recall@k:** với mỗi câu có nguồn, lấy số nguồn đúng trong top-k chia tổng nguồn đúng đã gán nhãn, rồi lấy trung bình. Tỷ lệ câu có ít nhất một nguồn đúng là Hit@k, không phải Recall@k khi có nhiều nguồn liên quan.
 - **Citation correctness:** đường dẫn được dẫn có thực sự hỗ trợ mệnh đề hay không? Cần người kiểm định hoặc gold labels.
 - **Faithfulness:** nội dung câu trả lời có bị suy diễn vượt chứng cứ hay không? Bản thực hành chưa có mô hình sinh nên chưa đo chỉ số này.
 - **Abstention:** khi không có bằng chứng, hệ thống có từ chối thay vì bịa thông tin không?
 
 Đối với tình huống nông nghiệp, phải phân biệt quy chuẩn, nghiên cứu thực nghiệm, diễn giải giáo trình và dữ liệu đo thực địa. Không sử dụng kết quả truy xuất từ khóa để ra quyết định tưới, bón phân hay kiểm định vùng trồng.
+

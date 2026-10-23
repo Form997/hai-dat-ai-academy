@@ -1,50 +1,75 @@
-# V3.8 — RAG có dẫn chứng, đánh giá và từ chối khi thiếu nguồn
+# V3.8 — Kiểm định truy hồi và tính toàn vẹn dẫn chứng
 
-**Phạm vi thực tế:** hệ thống truy xuất từ **5 đoạn tóm tắt tự biên soạn** có gắn liên kết nguồn gốc. Không gọi API, không có mô hình ngôn ngữ, không thu thập dữ liệu trực tuyến, không tuyên bố là công cụ tổng quan hệ thống hay xác minh toàn văn. Nguồn được chọn để minh họa; mỗi kết quả cần người học mở tài liệu gốc để đối chiếu.
+Phòng thực hành chạy offline trên 5 **đoạn diễn giải tự biên soạn** có URL nguồn. Không gọi LLM, không mở trang nguồn tại thời điểm truy vấn. Đây là mô-đun riêng với HAI ĐẤT AI/Ollama. Kết quả `evidence_found` chỉ thể hiện qua ngưỡng trùng từ khóa và phạm vi mẫu, chưa chứng minh câu trả lời đúng.
 
-## Phân tách các tầng
+## Kiến trúc
 
-1. **Corpus:** `versions/rag-corpus.json` gồm ID ổn định, loại nguồn, URL, phạm vi diễn giải và đoạn nội dung.
-2. **Retrieval:** `versions/rag-core.js` tách token tiếng Việt, chuẩn hóa dấu, tính độ phủ từ khóa và xếp hạng. Đây là **lexical matching**, không phải semantic embeddings.
-3. **Evidence gate:** yêu cầu ít nhất 2 token trùng và độ phủ từ khóa tối thiểu 50%. Đây là heuristic để học, không phải ngưỡng tin cậy đã hiệu chuẩn.
-4. **Presentation:** `versions/rag.js` dùng DOM an toàn và hiển thị ID, nguồn, đoạn chứng cứ. Không sinh kết luận vượt nguồn.
-5. **Evaluation:** `versions/rag-eval.json` có 7 câu hỏi có nguồn kỳ vọng và 6 câu hỏi cần từ chối.
+- `versions/rag-core.js`: dùng được trong Node và trình duyệt; chuẩn hóa tiếng Việt, giữ phủ định, kiểm tra schema/ID/HTTPS, truy hồi lexical hoặc BM25, quyết định phạm vi và đánh giá.
+- `versions/rag-corpus.json`: 5 nguồn mẫu, `capabilities` khai báo phạm vi. `provenance.review_status` ghi rõ chưa kiểm định độc lập; vị trí trích dẫn và ngày kiểm tra chưa có thì để `null`, không tự điền.
+- `versions/rag-eval.json`: 13 ca hồi quy phát triển (7 có nguồn, 6 cần từ chối).
+- `versions/rag-benchmark.json`: 16 ca thách thức (8 có nguồn, 8 cần từ chối), thêm 8 tài liệu nhiễu tổng hợp. Các mục `SYNTH-*` chỉ dành cho đánh giá, không tải lên giao diện như nguồn học thuật.
+- `versions/rag.js`: xác thực corpus trước khi cho tìm kiếm; ứng viên chưa đủ chứng cứ không hiển thị thành bằng chứng; tỷ lệ trùng từ khóa không được gọi là độ tin cậy.
 
-## Chạy kiểm thử
+## Chạy và tái lập
+
+Dùng Node.js 20 trở lên, không cần cài npm dependency:
 
 ```bash
 node tests/rag-evidence.cjs
+node tests/rag-ui.cjs
+node tests/rag-mutations.cjs
+node tests/rag-benchmark.cjs > rag-benchmark-report.json
 ```
 
-Các chỉ số được tách riêng:
-- `hit_at_5`: tỷ lệ câu có nhãn nguồn đúng được tìm thấy trong top-5 của `search()`. Với một nguồn đúng mỗi câu, đây là hit rate; chưa phải đánh giá recall đầy đủ với nhiều nguồn liên quan.
-- `mrr_at_5`: trung bình nghịch đảo thứ hạng nguồn đúng trên câu có đáp án.
-- `false_refusals`, `false_acceptances`: từ chối sai và chấp nhận sai theo nhãn.
-- `abstention_precision`, `abstention_recall`: độ chính xác và độ bao phủ từ chối; mẫu số bằng 0 trả `null`.
+Báo cáo JSON lưu phiên bản Node, SHA-256 của mã/corpus/tập câu hỏi, từng kết quả, kết quả theo nhóm, so sánh lexical/BM25 ở k=1,3,5. Sweep ngưỡng 0.3/0.5/0.7/0.9 chỉ chạy trên tập phát triển; không tự chọn ngưỡng từ tập thách thức. CI lưu báo cáo thành artifact. DOM harness kiểm tra hành vi bằng mô phỏng; chưa kiểm tra bố cục hoặc khác biệt giữa trình duyệt thật.
 
-Kết quả qua ngưỡng ở `results`; ứng viên từ khóa chưa đủ chứng cứ nằm riêng ở `candidates`. Không tính ứng viên thành bằng chứng đã chấp nhận.
+## Tách truy hồi khỏi chấp nhận bằng chứng
 
-Bộ đánh giá hiện có 13 câu (7 có nguồn, 6 cần từ chối), thêm test chữ Đ, stopword và tài liệu gây nhiễu. Đây vẫn là tập hồi quy do dự án tự viết, chưa có tập kiểm định độc lập hay hiệu chuẩn ngưỡng. Các mẫu hỏi số liệu, giá, thời điểm và địa phương được chặn bảo thủ vì corpus không chứa dữ liệu đó; quy tắc này chưa hiểu ngữ nghĩa và có thể từ chối quá mức hoặc bỏ sót cách diễn đạt khác. Chưa đo citation correctness hay faithfulness.
+`search(docs, query, k, method)` trả ứng viên được xếp hạng. `answer()` trả:
 
-## Bài tập nâng cao
+- `results`: đoạn đạt ngưỡng hiện hành.
+- `candidates`: ứng viên truy hồi, kể cả khi từ chối.
+- `reason`: `empty_query`, `no_match`, `low_overlap`, `unsupported_scope`, `unsupported_entity`, hoặc `lexical_match_only`.
+- `requirements`: loại nhu cầu nhận biết được (định lượng, cập nhật, địa phương).
 
-- Thay truy xuất từ khóa bằng BM25 hoặc embeddings; so sánh trên tập câu hỏi do người đánh giá độc lập gán nhãn.
-- Tách `retrieval recall`, `answer faithfulness`, `citation correctness` và `abstention precision`.
-- Thử câu hỏi chứa phủ định, đồng nghĩa, tên địa phương và câu hỏi cần nhiều nguồn; phân tích lỗi.
-- Lập hồ sơ nguồn: tác giả, ngày, phiên bản, quyền truy cập, giấy phép, retraction và mệnh đề được hỗ trợ.
-- Đối với nông nghiệp, yêu cầu phân biệt tài liệu chuẩn (FAO56) với dữ liệu quan trắc và khuyến cáo cụ thể tại địa phương.
+Ngưỡng mặc định: ít nhất 2 token trùng, độ phủ 50%. Bộ nhận dạng yêu cầu dựa trên biểu thức từ ngữ, **không phải hiểu ngữ nghĩa**; có thể bỏ sót cách hỏi khác hoặc từ chối quá mức. Nguồn chỉ có năng lực `concept` không được dùng cho yêu cầu định lượng/cập nhật/địa phương nhận biết được. Thêm nhãn năng lực không tự chứng minh tài liệu thật sự hỗ trợ yêu cầu; cần người duyệt. Phủ định được giữ lại nhưng chưa có suy luận mâu thuẫn hay kiểm tra entailment.
 
-## Lời giải mẫu
+## Định nghĩa chỉ số
 
-**Vì sao truy xuất được nguồn chưa chứng minh câu trả lời đúng?** Vì liên kết có thể sai chủ đề, lỗi thời hoặc đoạn trích không hỗ trợ mệnh đề. Cần xác minh từng mệnh đề.
+Nhãn `relevant_ids` cho phép nhiều nguồn đúng; `expected_id` cũ vẫn đọc được. Nhãn thiếu, ID trùng hoặc nguồn không tồn tại làm đánh giá báo lỗi.
 
-**Vì sao RAG nên từ chối khi thiếu chứng cứ?** Vì tạo câu trả lời tự tin không có bằng chứng có thể gây sai lệch, đặc biệt trong quyết định sản xuất nông nghiệp.
+| Chỉ số | Định nghĩa |
+|---|---|
+| Hit@k | Tỷ lệ câu có ít nhất một nguồn đúng trong top-k |
+| Recall@k | Trung bình số nguồn đúng tìm được / tổng nguồn đúng của mỗi câu |
+| Precision@k | Trung bình số nguồn đúng tìm được / k; vị trí trống tính là không liên quan |
+| MRR@k | Nghịch đảo thứ hạng nguồn đúng đầu tiên, không tìm thấy tính 0 |
+| nDCG@k | DCG chuẩn hóa với relevance nhị phân; chưa có nhãn mức độ liên quan |
+| Complete evidence rate | Tỷ lệ câu có toàn bộ nguồn đúng trong `results` đã chấp nhận |
+| False acceptance/refusal | Số câu cần từ chối nhưng được nhận / có nguồn nhưng bị từ chối |
+| Abstention precision | Từ chối đúng / tổng số từ chối |
+| Abstention recall | Từ chối đúng / tổng câu cần từ chối |
 
-## Tài liệu gốc
+Chỉ số truy hồi chỉ tính trên câu có nhãn nguồn. Chỉ số không có mẫu số trả `null`, không biến thành 0 hay 100%. Khoảng Wilson 95% cho Hit và abstention recall phản ánh kích thước mẫu nhỏ; các câu tự biên soạn tương quan nên không được diễn giải như bảo đảm thống kê ngoài thực tế.
 
-- Lewis et al., *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*, 2020: https://arxiv.org/abs/2005.11401
-- scikit-learn, *Common pitfalls*: https://scikit-learn.org/stable/common_pitfalls.html
-- ALLEA, *European Code of Conduct for Research Integrity*, 2023: https://doi.org/10.26356/ECOC
+## Kiểm tra trích dẫn: phạm vi chính xác
 
-Tất cả ví dụ tiếng Việt do dự án tự viết. Chưa có kiểm định độc lập đối với toàn bộ diễn giải.
+`checkCitations(docs, [{doc_id, url, quote}])` kiểm tra ID tồn tại, URL khớp và đoạn quote xuất hiện nguyên văn trong **bản diễn giải nội bộ**. Phát hiện ID/URL/đoạn trích bịa hoặc rỗng. Chưa kiểm tra mệnh đề có được suy ra từ đoạn trích, tính xác thực tài liệu từ xa, hiệu lực phiên bản hay việc trích dẫn đã bao phủ mọi mệnh đề.
 
+Không trình bày kết quả này như citation correctness hoặc faithfulness của LLM. Muốn nâng lên mức đó cần đoạn gốc có vị trí, tác giả/phiên bản, đánh giá hỗ trợ từng mệnh đề và người gán nhãn độc lập.
+
+## Kết quả và lỗi còn lại
+
+Tập hồi quy 13 ca đạt với ngưỡng mặc định. Sáu mutation có chủ ý đều bị test phát hiện: hỏng chữ Đ, luôn từ chối, luôn chấp nhận và nhận quote bịa, bỏ qua từ đồng nghĩa và bỏ qua thực thể cụ thể.
+
+Trên tập thách thức 16 ca với 13 tài liệu, ở k=5 cả lexical và BM25 hiện có Recall=1, complete evidence rate=8/8 và không còn false acceptance/false refusal trong tập này. Ở k=1, complete evidence rate=6/8 vì hai câu cần nhiều nguồn. Không suy rộng tỷ lệ đạt này thành độ tin cậy thực tế.
+
+Hai lỗi đã quan sát được chuyển thành ca hồi quy: bảng đồng nghĩa minh bạch ánh xạ “giữ kín” → “bảo vệ”, “thông tin đăng nhập” → “thông tin xác thực”; yêu cầu có mã chữ-số hoặc cụm sau “giống” phải hiện diện trong từng nguồn được chấp nhận. Thử thêm XYZ99, ZZ42 và giống cải xanh để tránh chặn riêng chuỗi AL2. Cơ chế này vẫn dựa trên từ ngữ, có thể từ chối quá mức câu so sánh nhiều thực thể ở nhiều nguồn hoặc bỏ sót tên riêng không có mẫu nhận dạng. Không phải bộ nhận diện thực thể hay suy luận chuyên ngành.
+
+Tập thách thức do cùng dự án soạn và đã được xem trong quá trình phát triển; **không gọi là holdout độc lập**. Chưa có dữ liệu người dùng, nguồn xung đột/thu hồi, kiểm định theo chuyên ngành hoặc đánh giá LLM. Bước tiếp theo là thu thập nhãn độc lập, đánh giá entailment/độ đầy đủ bằng chứng, và dùng nguồn thực nghiệm phù hợp trước mọi khuyến cáo tưới/bón tại địa phương.
+
+## Nguồn để người học đối chiếu
+
+- Lewis et al. (2020), RAG: https://arxiv.org/abs/2005.11401
+- scikit-learn, tránh rò rỉ khi đánh giá: https://scikit-learn.org/stable/common_pitfalls.html
+- ALLEA (2023), liêm chính nghiên cứu: https://doi.org/10.26356/ECOC

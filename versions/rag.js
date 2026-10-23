@@ -1,19 +1,24 @@
 'use strict';
-const q=document.getElementById('ragQuery'),o=document.getElementById('ragResult');
-let docs=[];
-fetch('./rag-corpus.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(data=>{docs=data;o.textContent='Đã tải '+docs.length+' nguồn minh họa. Nhập câu hỏi để tìm bằng chứng.'}).catch(()=>{o.textContent='Không tải được tập nguồn mẫu; thử tải lại trang.'});
-document.getElementById('ragSearch').addEventListener('click',()=>{
+const q=document.getElementById('ragQuery'),o=document.getElementById('ragResult'),button=document.getElementById('ragSearch');
+let docs=[],loadError=false;
+button.disabled=true;
+fetch('./rag-corpus.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json();}).then(data=>{
+ docs=AcademyRAG.validateCorpus(data);button.disabled=false;
+ o.textContent='Đã tải '+docs.length+' đoạn diễn giải mẫu. Nhập câu hỏi để tìm tài liệu liên quan.';
+}).catch(()=>{loadError=true;o.textContent='Không tải được tập nguồn hợp lệ; thử tải lại trang.';});
+button.addEventListener('click',()=>{
  o.replaceChildren();
- if(q.value.trim().length<3){o.textContent='Vui lòng nhập câu hỏi có ít nhất 3 ký tự.';return;}
+ if(loadError){o.textContent='Không tải được tập nguồn hợp lệ; thử tải lại trang.';return;}
  if(!docs.length){o.textContent='Tập nguồn chưa tải xong.';return;}
+ if(q.value.trim().length<3){o.textContent='Vui lòng nhập câu hỏi có ít nhất 3 ký tự.';return;}
  const result=AcademyRAG.answer(docs,q.value);
  const p=document.createElement('p');p.textContent=result.message;o.append(p);
  if(result.candidates.length&&!result.results.length){const note=document.createElement('p');note.textContent='Có tài liệu trùng từ khóa nhưng chưa đủ chứng cứ trả lời câu hỏi.';o.append(note);}
- for(const item of result.results){const d=item.doc,section=document.createElement('section'),a=document.createElement('a'),meta=document.createElement('small'),detail=document.createElement('p');
- a.href=d.url;a.rel='noopener noreferrer';a.textContent=d.id+' — '+d.title;
- meta.textContent=' · độ phủ từ khóa '+Math.round(item.coverage*100)+'% · '+d.source_type;
- detail.textContent=d.text+' ('+d.verified_scope+')';
- section.append(a,meta,detail);o.append(section);
+ for(const item of result.results){
+  const d=item.doc,section=document.createElement('section'),a=document.createElement('a'),meta=document.createElement('small'),detail=document.createElement('p');
+  a.href=d.url;a.rel='noopener noreferrer';a.textContent=d.id+' — '+d.title;
+  meta.textContent=' · trùng từ khóa '+Math.round(item.coverage*100)+'% (không phải xác suất đúng) · '+d.source_type;
+  detail.textContent=d.text+' ('+d.verified_scope+')';
+  section.append(a,meta,detail);o.append(section);
  }
 });
-

@@ -1,16 +1,27 @@
 name: V3.8 RAG evidence checks
 on:
   push:
-    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
+    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'curriculum/06-advanced-rag.md', 'tests/rag*.cjs', '.github/workflows/v38-rag.yml']
   pull_request:
-    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
+    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'curriculum/06-advanced-rag.md', 'tests/rag*.cjs', '.github/workflows/v38-rag.yml']
+permissions:
+  contents: read
 jobs:
   evaluate:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['20', '22']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node }}
       - run: node tests/rag-evidence.cjs
-
+      - run: node tests/rag-ui.cjs
+      - run: node tests/rag-mutations.cjs
+      - run: node tests/rag-benchmark.cjs > rag-benchmark-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rag-evaluation-node-${{ matrix.node }}
+          path: rag-benchmark-report.json
