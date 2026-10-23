@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "purpose": "Challenge set authored by this project; not an independent holdout. Failures are reported, not hidden.",
+  "distractors": [
+    {
+      "id": "SYNTH-0",
+      "title": "ET0 — mục gây nhiễu tổng hợp",
+      "text": "ET0 là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/0",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-1",
+      "title": "ETc — mục gây nhiễu tổng hợp",
+      "text": "ETc là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/1",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-2",
+      "title": "Kc — mục gây nhiễu tổng hợp",
+      "text": "Kc là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/2",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-3",
+      "title": "token — mục gây nhiễu tổng hợp",
+      "text": "token là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/3",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-4",
+      "title": "GitHub — mục gây nhiễu tổng hợp",
+      "text": "GitHub là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/4",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-5",
+      "title": "API — mục gây nhiễu tổng hợp",
+      "text": "API là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/5",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-6",
+      "title": "validation — mục gây nhiễu tổng hợp",
+      "text": "validation là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/6",
+      "capabilities": [
+        "concept"
+      ]
+    },
+    {
+      "id": "SYNTH-7",
+      "title": "retrieval — mục gây nhiễu tổng hợp",
+      "text": "retrieval là từ khóa trong mục lục giả lập; không có diễn giải hay dữ liệu hỗ trợ.",
+      "source_type": "synthetic_distractor",
+      "verified_scope": "Chỉ dùng trong benchmark; không phải nguồn học thuật.",
+      "url": "https://example.org/synthetic/7",
+      "capabilities": [
+        "concept"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "CH-01",
+      "category": "paraphrase",
+      "query": "Giữ kín thông tin đăng nhập trên kho mã bằng cách nào?",
+      "relevant_ids": [
+        "GITHUB-SEC-01"
+      ]
+    },
+    {
+      "id": "CH-02",
+      "category": "no_diacritics",
+      "query": "xac thuc phan quyen API",
+      "relevant_ids": [
+        "OWASP-API-01"
+      ]
+    },
+    {
+      "id": "CH-03",
+      "category": "uppercase",
+      "query": "BẢO VỆ MẬT KHẨU TOKEN GITHUB",
+      "relevant_ids": [
+        "GITHUB-SEC-01"
+      ]
+    },
+    {
+      "id": "CH-04",
+      "category": "multi_source",
+      "query": "Bảo mật mật khẩu token GitHub và xác thực phân quyền API",
+      "relevant_ids": [
+        "GITHUB-SEC-01",
+        "OWASP-API-01"
+      ]
+    },
+    {
+      "id": "CH-05",
+      "category": "multi_source",
+      "query": "Cross validation test độc lập và retrieval augmented generation truy xuất tài liệu",
+      "relevant_ids": [
+        "SKLEARN-CV-01",
+        "RAG-LEWIS-01"
+      ]
+    },
+    {
+      "id": "CH-06",
+      "category": "quantitative",
+      "query": "ET0 ETc Kc hôm nay bao nhiêu?",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-07",
+      "category": "local",
+      "query": "ET0 ETc Kc tại ruộng Huế",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-08",
+      "category": "current",
+      "query": "GitHub token mới nhất giá bao nhiêu?",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-09",
+      "category": "stopwords",
+      "query": "CÓ VÀ LÀ CẦN",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-10",
+      "category": "empty",
+      "query": "...",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-11",
+      "category": "unanswerable_near_topic",
+      "query": "GitHub token hết hạn sau bao lâu?",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-12",
+      "category": "unanswerable_near_topic",
+      "query": "ET0 ETc hệ số Kc cho giống rau AL2",
+      "relevant_ids": []
+    },
+    {
+      "id": "CH-13",
+      "category": "concept",
+      "query": "Phân biệt ET0 ETc hệ số Kc",
+      "relevant_ids": [
+        "FAO56-ET0-01"
+      ]
+    },
+    {
+      "id": "CH-14",
+      "category": "concept",
+      "query": "Retrieval augmented generation truy xuất tài liệu",
+      "relevant_ids": [
+        "RAG-LEWIS-01"
+      ]
+    },
+    {
+      "id": "CH-15",
+      "category": "negation",
+      "query": "Vì sao không công khai mật khẩu token GitHub?",
+      "relevant_ids": [
+        "GITHUB-SEC-01"
+      ]
+    },
+    {
+      "id": "CH-16",
+      "category": "mixed_support",
+      "query": "Bảo vệ mật khẩu GitHub và giá rau hôm nay?",
+      "relevant_ids": []
+    }
+  ]
+}
