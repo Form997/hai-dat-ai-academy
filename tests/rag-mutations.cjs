@@ -6,6 +6,8 @@ const mutations=[
  ['uppercase_d',".replace(/đ/g,'d')",'.replace(/đ/g,\'BROKEN\')'],
  ['always_refuse',"status:qualified.length?'evidence_found':'insufficient_evidence'","status:'insufficient_evidence'"],
  ['always_accept',"status:qualified.length?'evidence_found':'insufficient_evidence'","status:'evidence_found'"],
+ ['ignored_aliases','canonical(s).match','normalize(s).match'],
+ ['ignored_entities','entitySupported(x)&&',''],
  ['forged_quotes',"d.text.includes(c.quote)",'true']
 ];
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rag-mutation-'));

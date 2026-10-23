@@ -8,7 +8,10 @@
  function normalize(s){return String(s??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');}
  const stop=new Set(['nào','đâu','trong','được','những','cách','làm','sao','với','cho','của','là','có','và','cần','một','các','theo','tại','khi','thế'].map(normalize));
  // Preserve negation: lexical retrieval cannot establish whether a claim is true.
- function terms(s){return (normalize(s).match(/[a-z0-9]+/g)||[]).filter(w=>w.length>=2&&!stop.has(w));}
+ // Small explicit vocabulary; aliases improve lexical matching, not entailment.
+ const aliases=[[/\bgiu kin\b/g,'bao ve'],[/\bthong tin dang nhap\b/g,'thong tin xac thuc']];
+ function canonical(s){return aliases.reduce((value,[pattern,replacement])=>value.replace(pattern,replacement),normalize(s));}
+ function terms(s){return (canonical(s).match(/[a-z0-9]+/g)||[]).filter(w=>w.length>=2&&!stop.has(w));}
  function tokens(s){return [...new Set(terms(s))];}
  function safeURL(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password;}catch{return false;}}
  function validateCorpus(docs){
@@ -52,8 +55,14 @@
   const k=options.k??5,method=options.method??'lexical',minCoverage=options.minCoverage??0.5;
   if(typeof minCoverage!=='number'||!Number.isFinite(minCoverage)||minCoverage<0||minCoverage>1)throw RangeError('Ngưỡng không hợp lệ');
   const ranked=search(docs,query,k,method),required=requirements(query);
-  const qualified=ranked.filter(x=>x.matched.length>=2&&x.coverage>=minCoverage&&required.every(r=>(x.doc.capabilities||['concept']).includes(r)));
-  const reason=!tokens(query).length?'empty_query':!ranked.length?'no_match':!qualified.length?(required.length?'unsupported_scope':'low_overlap'):'lexical_match_only';
+  // Named cultivars / alphanumeric identifiers must be present in each accepted source.
+  // Never infer a cultivar-specific answer from a general conceptual paragraph.
+  const identifiers=tokens(query).filter(w=>/[a-z]/.test(w)&&/[0-9]/.test(w));
+  const cultivar=normalize(query).match(/\bgiong\s+([^?.!,;]+)/);
+  const entities=[...new Set([...identifiers,...(cultivar?tokens(cultivar[1]):[])])];
+  const entitySupported=x=>entities.every(w=>tokens(x.doc.title+' '+x.doc.text).includes(w));
+  const qualified=ranked.filter(x=>entitySupported(x)&&x.matched.length>=2&&x.coverage>=minCoverage&&required.every(r=>(x.doc.capabilities||['concept']).includes(r)));
+  const reason=!tokens(query).length?'empty_query':!ranked.length?'no_match':!qualified.length?(entities.length&&!ranked.some(entitySupported)?'unsupported_entity':required.length?'unsupported_scope':'low_overlap'):'lexical_match_only';
   return {status:qualified.length?'evidence_found':'insufficient_evidence',reason,requirements:required,
    message:qualified.length?'Tìm thấy đoạn liên quan để đối chiếu; chưa xác nhận tính đúng hoặc đầy đủ của câu trả lời.':'Chưa đủ bằng chứng trong bộ tài liệu mẫu. Không sinh câu trả lời.',
    results:qualified,candidates:ranked};
@@ -103,5 +112,5 @@
   const unanswerable=cases.length-answerable;
   return {total:cases.length,k,method:options.method??'lexical',answerable,unanswerable,hit_at_k:ratio(hits,answerable),recall_at_k:ratio(recall,answerable),precision_at_k:ratio(precision,answerable),mrr_at_k:ratio(rr,answerable),ndcg_at_k:ratio(ndcg,answerable),complete_evidence_rate:ratio(complete,answerable),answer_rate:ratio(answered,cases.length),correct_refusals:correctRefusal,false_acceptances:falseAcceptance,false_refusals:falseRefusal,abstention_precision:ratio(correctRefusal,correctRefusal+falseRefusal),abstention_recall:ratio(correctRefusal,unanswerable),hit_rate_ci95:wilson(hits,answerable),refusal_recall_ci95:wilson(correctRefusal,unanswerable),rows};
  }
- return {normalize,tokens,safeURL,validateCorpus,search,requirements,answer,checkCitations,metrics};
+ return {normalize,canonical,tokens,safeURL,validateCorpus,search,requirements,answer,checkCitations,metrics};
 });

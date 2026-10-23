@@ -29,7 +29,7 @@ Báo cáo JSON lưu phiên bản Node, SHA-256 của mã/corpus/tập câu hỏi
 
 - `results`: đoạn đạt ngưỡng hiện hành.
 - `candidates`: ứng viên truy hồi, kể cả khi từ chối.
-- `reason`: `empty_query`, `no_match`, `low_overlap`, `unsupported_scope`, hoặc `lexical_match_only`.
+- `reason`: `empty_query`, `no_match`, `low_overlap`, `unsupported_scope`, `unsupported_entity`, hoặc `lexical_match_only`.
 - `requirements`: loại nhu cầu nhận biết được (định lượng, cập nhật, địa phương).
 
 Ngưỡng mặc định: ít nhất 2 token trùng, độ phủ 50%. Bộ nhận dạng yêu cầu dựa trên biểu thức từ ngữ, **không phải hiểu ngữ nghĩa**; có thể bỏ sót cách hỏi khác hoặc từ chối quá mức. Nguồn chỉ có năng lực `concept` không được dùng cho yêu cầu định lượng/cập nhật/địa phương nhận biết được. Thêm nhãn năng lực không tự chứng minh tài liệu thật sự hỗ trợ yêu cầu; cần người duyệt. Phủ định được giữ lại nhưng chưa có suy luận mâu thuẫn hay kiểm tra entailment.
@@ -60,9 +60,11 @@ Không trình bày kết quả này như citation correctness hoặc faithfulnes
 
 ## Kết quả và lỗi còn lại
 
-Tập hồi quy 13 ca đạt với ngưỡng mặc định. Bốn mutation có chủ ý đều bị test phát hiện: hỏng chữ Đ, luôn từ chối, luôn chấp nhận và nhận quote bịa.
+Tập hồi quy 13 ca đạt với ngưỡng mặc định. Sáu mutation có chủ ý đều bị test phát hiện: hỏng chữ Đ, luôn từ chối, luôn chấp nhận và nhận quote bịa, bỏ qua từ đồng nghĩa và bỏ qua thực thể cụ thể.
 
-Trên tập thách thức 16 ca với 13 tài liệu, ở k=5 cả lexical và BM25 hiện có Recall=1; nhưng **vẫn 1 từ chối sai và 1 chấp nhận sai**, complete evidence rate=7/8. Câu diễn đạt lại về giữ kín thông tin đăng nhập bị từ chối; câu hỏi hệ số Kc cho giống AL2 được nhận dù thiếu thông tin giống. Báo cáo giữ nguyên các lỗi này, không sửa nhãn để làm đẹp điểm. BM25 chưa chứng minh cải thiện trên tập nhỏ này.
+Trên tập thách thức 16 ca với 13 tài liệu, ở k=5 cả lexical và BM25 hiện có Recall=1, complete evidence rate=8/8 và không còn false acceptance/false refusal trong tập này. Ở k=1, complete evidence rate=6/8 vì hai câu cần nhiều nguồn. Không suy rộng tỷ lệ đạt này thành độ tin cậy thực tế.
+
+Hai lỗi đã quan sát được chuyển thành ca hồi quy: bảng đồng nghĩa minh bạch ánh xạ “giữ kín” → “bảo vệ”, “thông tin đăng nhập” → “thông tin xác thực”; yêu cầu có mã chữ-số hoặc cụm sau “giống” phải hiện diện trong từng nguồn được chấp nhận. Thử thêm XYZ99, ZZ42 và giống cải xanh để tránh chặn riêng chuỗi AL2. Cơ chế này vẫn dựa trên từ ngữ, có thể từ chối quá mức câu so sánh nhiều thực thể ở nhiều nguồn hoặc bỏ sót tên riêng không có mẫu nhận dạng. Không phải bộ nhận diện thực thể hay suy luận chuyên ngành.
 
 Tập thách thức do cùng dự án soạn và đã được xem trong quá trình phát triển; **không gọi là holdout độc lập**. Chưa có dữ liệu người dùng, nguồn xung đột/thu hồi, kiểm định theo chuyên ngành hoặc đánh giá LLM. Bước tiếp theo là thu thập nhãn độc lập, đánh giá entailment/độ đầy đủ bằng chứng, và dùng nguồn thực nghiệm phù hợp trước mọi khuyến cáo tưới/bón tại địa phương.
 

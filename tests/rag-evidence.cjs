@@ -63,3 +63,13 @@ assert.equal(multi.hit_at_k,1);assert.equal(multi.recall_at_k,0.5);assert.equal(
 assert.ok(m.hit_rate_ci95[0]<1&&m.hit_rate_ci95[1]<=1);
 for(const method of ['lexical','bm25'])assert.equal(api.search([...distractors,...docs],'ET0 ETc Kc',1,method)[0].doc.id,'FAO56-ET0-01');
 console.log('PASS V3.8 regression, schema, citation integrity and metric arithmetic',JSON.stringify({total:m.total,false_acceptances:m.false_acceptances,false_refusals:m.false_refusals}));
+
+// Previously failing challenge cases are now development regressions.
+for(const query of ['Giữ kín thông tin đăng nhập trên kho mã bằng cách nào?','giu kin thong tin dang nhap','GIỮ KÍN THÔNG TIN ĐĂNG NHẬP']){
+ const r=api.answer(docs,query);assert.equal(r.status,'evidence_found');assert.ok(r.results.some(x=>x.doc.id==='GITHUB-SEC-01'));
+}
+for(const query of ['ET0 ETc hệ số Kc cho giống rau AL2','ET0 ETc hệ số Kc cho giống XYZ99','ET0 ETc hệ số Kc cho giống cải xanh','ET0 ETc mã ZZ42']){
+ const r=api.answer(docs,query);assert.equal(r.status,'insufficient_evidence');assert.equal(r.results.length,0);assert.equal(r.reason,'unsupported_entity');
+}
+assert.equal(api.answer(docs,'ET0 ETc hệ số Kc').status,'evidence_found');
+console.log('PASS paraphrase aliases and unsupported cultivar/entity regressions');
