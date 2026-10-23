@@ -1,9 +1,9 @@
 name: V3.8 RAG evidence checks
 on:
   push:
-    paths: ['versions/rag*', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
+    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
   pull_request:
-    paths: ['versions/rag*', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
+    paths: ['versions/rag*', 'versions/v33.html', 'practical/README-rag-v38.md', 'tests/rag-evidence.cjs', '.github/workflows/v38-rag.yml']
 jobs:
   evaluate:
     runs-on: ubuntu-latest
@@ -13,3 +13,4 @@ jobs:
         with:
           node-version: '20'
       - run: node tests/rag-evidence.cjs
+

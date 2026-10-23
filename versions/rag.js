@@ -8,6 +8,7 @@ document.getElementById('ragSearch').addEventListener('click',()=>{
  if(!docs.length){o.textContent='Tập nguồn chưa tải xong.';return;}
  const result=AcademyRAG.answer(docs,q.value);
  const p=document.createElement('p');p.textContent=result.message;o.append(p);
+ if(result.candidates.length&&!result.results.length){const note=document.createElement('p');note.textContent='Có tài liệu trùng từ khóa nhưng chưa đủ chứng cứ trả lời câu hỏi.';o.append(note);}
  for(const item of result.results){const d=item.doc,section=document.createElement('section'),a=document.createElement('a'),meta=document.createElement('small'),detail=document.createElement('p');
  a.href=d.url;a.rel='noopener noreferrer';a.textContent=d.id+' — '+d.title;
  meta.textContent=' · độ phủ từ khóa '+Math.round(item.coverage*100)+'% · '+d.source_type;
@@ -15,3 +16,4 @@ document.getElementById('ragSearch').addEventListener('click',()=>{
  section.append(a,meta,detail);o.append(section);
  }
 });
+
